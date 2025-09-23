@@ -1,0 +1,65 @@
+<div class="mb-8">
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Your Boxes</h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Manage your storage boxes and their contents.
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <a routerLink="/add-box" 
+         class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add New Box
+      </a>
+    </div>
+  </div>
+</div>
+
+@if ((boxes$ | async)?.length === 0) {
+  <div class="text-center py-12">
+    <div class="mx-auto h-12 w-12 text-gray-400">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+      </svg>
+    </div>
+    <h3 class="mt-4 text-lg font-medium text-gray-900">No boxes yet</h3>
+    <p class="mt-2 text-gray-500">Get started by creating your first storage box.</p>
+    <div class="mt-6">
+      <a routerLink="/add-box" 
+         class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
+        Add your first box
+      </a>
+    </div>
+  </div>
+} @else {
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    @for (box of boxes$ | async; track box.id) {
+      <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm hover:shadow-md hover:border-gray-400 transition-all duration-200 cursor-pointer group">
+        <a [routerLink]="['/box', box.id]" class="absolute inset-0 rounded-lg z-10"></a>
+        <div class="flex items-center space-x-3">
+          <div class="flex-shrink-0">
+            <div class="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-200">
+              <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="focus:outline-none">
+              <p class="text-sm font-medium text-gray-900 truncate">{{ box.name }}</p>
+              <p class="text-sm text-gray-500 truncate">{{ box.description || 'No description' }}</p>
+            </div>
+          </div>
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
