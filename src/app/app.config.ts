@@ -1,7 +1,7 @@
 import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { initializeApp, provideFirebaseApp, getApp } from '@angular/fire/app';
 import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
-import { connectFirestoreEmulator, getFirestore, provideFirestore, enableMultiTabIndexedDbPersistence } from '@angular/fire/firestore';
+import { connectFirestoreEmulator, initializeFirestore, provideFirestore, persistentLocalCache, persistentMultipleTabManager } from '@angular/fire/firestore';
 import { provideRouter } from '@angular/router';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
@@ -26,7 +26,14 @@ export const appConfig: ApplicationConfig = {
       return auth;
     }),
     provideFirestore(() => {
-      const firestore = getFirestore();
+      // Configure Firestore with persistent local cache for offline functionality
+      // This replaces the deprecated enableMultiTabIndexedDbPersistence
+      const firestore = initializeFirestore(getApp(), {
+        localCache: persistentLocalCache({
+          tabManager: persistentMultipleTabManager()
+        })
+      });
+      
       if (!environment.production) {
         // Connect to emulator in development - only if not already connected
         try {
@@ -36,18 +43,6 @@ export const appConfig: ApplicationConfig = {
           console.log('Firestore emulator already connected');
         }
       }
-      
-      // Enable offline persistence for better offline experience
-      // This allows the app to work completely offline in the basement
-      enableMultiTabIndexedDbPersistence(firestore).catch((err) => {
-        if (err.code === 'failed-precondition') {
-          console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-        } else if (err.code === 'unimplemented') {
-          console.warn('The current browser does not support offline persistence');
-        } else {
-          console.error('Failed to enable offline persistence:', err);
-        }
-      });
       
       return firestore;
     }),
