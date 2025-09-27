@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-box-list',
+  selector: 'inv-box-list',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './box-list.component.html',

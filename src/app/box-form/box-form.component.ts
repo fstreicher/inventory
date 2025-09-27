@@ -5,7 +5,7 @@ import { FirestoreService, Box } from '../firestore.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-box-form',
+  selector: 'inv-box-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './box-form.component.html',

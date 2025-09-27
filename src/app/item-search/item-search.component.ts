@@ -11,7 +11,7 @@ export interface ItemWithBox {
 }
 
 @Component({
-  selector: 'app-item-search',
+  selector: 'inv-item-search',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './item-search.component.html',

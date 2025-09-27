@@ -1,22 +1,31 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
-    selector: 'app-root',
-    imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.css'
+  selector: 'inv-root',
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive
+  ],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'frontend';
-  isMobileMenuOpen = false;
 
-  toggleMobileMenu() {
+  protected isMobileMenuOpen = false;
+
+  protected navItems = [
+    { label: 'All boxes', path: '/boxes' },
+    { label: 'Search Items', path: '/search' },
+    { label: 'Add box', path: '/add-box' },
+  ]
+
+  public toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
-  closeMobileMenu() {
+  public closeMobileMenu() {
     this.isMobileMenuOpen = false;
   }
 }

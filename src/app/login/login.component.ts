@@ -3,7 +3,7 @@ import { AuthService } from '../auth.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-login',
+  selector: 'inv-login',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './login.component.html',

@@ -5,7 +5,7 @@ import { Observable, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-box-detail',
+  selector: 'inv-box-detail',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './box-detail.component.html',
