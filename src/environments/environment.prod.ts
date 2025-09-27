@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   firebase: {
-    apiKey: 'AIzaSyCO3x02tRYt_5SUiXAuqOzRbiOg-1GHj84',
+    apiKey: process.env['FIREBASE_API_KEY'] || 'AIzaSyCO3x02tRYt_5SUiXAuqOzRbiOg-1GHj84',
     authDomain: 'inventory-fstreicher.firebaseapp.com',
     projectId: 'inventory-fstreicher',
     storageBucket: 'inventory-fstreicher.firebasestorage.app',
