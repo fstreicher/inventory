@@ -1,8 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { FirestoreService, Box, Item } from '../firestore.service';
-import { Observable, switchMap } from 'rxjs';
+import { Observable, switchMap, map, startWith } from 'rxjs';
 import { CommonModule } from '@angular/common';
+
+interface ItemListState {
+  loading: boolean;
+  items: Item[];
+}
 
 @Component({
   selector: 'inv-box-detail',
@@ -20,8 +25,13 @@ export class BoxDetailComponent {
     switchMap(params => this.firestoreService.getBox(params.get('id') as string))
   );
 
-  items$: Observable<Item[]> = this.route.paramMap.pipe(
-    switchMap(params => this.firestoreService.getItems(params.get('id') as string))
+  itemState$: Observable<ItemListState> = this.route.paramMap.pipe(
+    switchMap(params => 
+      this.firestoreService.getItems(params.get('id') as string).pipe(
+        map(items => ({ loading: false, items })),
+        startWith({ loading: true, items: [] })
+      )
+    )
   );
 
   boxId: string = '';

@@ -1,8 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { FirestoreService, Box } from '../firestore.service';
-import { Observable } from 'rxjs';
+import { Observable, map, startWith } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+
+interface BoxListState {
+  loading: boolean;
+  boxes: Box[];
+}
 
 @Component({
   selector: 'inv-box-list',
@@ -13,5 +18,9 @@ import { RouterLink } from '@angular/router';
 })
 export class BoxListComponent {
   private firestoreService: FirestoreService = inject(FirestoreService);
-  boxes$: Observable<Box[]> = this.firestoreService.getBoxes();
+  
+  boxState$: Observable<BoxListState> = this.firestoreService.getBoxes().pipe(
+    map(boxes => ({ loading: false, boxes })),
+    startWith({ loading: true, boxes: [] })
+  );
 }

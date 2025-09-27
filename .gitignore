@@ -38,6 +38,7 @@ testem.log
 /typings
 WARP.md
 firestore-debug.log*
+firebase-debug.log*
 
 # System files
 .DS_Store

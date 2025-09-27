@@ -42,20 +42,41 @@ export class BoxFormComponent implements OnInit {
   onSubmit(): void {
     if (this.boxForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
-      const box: Box = this.boxForm.value;
+      const boxData = this.boxForm.value;
+      
       if (this.boxId) {
-        this.firestoreService.updateBox({ ...box, id: this.boxId }).subscribe({
-          next: () => {
-            console.log('Box updated successfully!');
-            this.router.navigate(['/box', this.boxId]);
+        // For updates, we need to preserve the existing userId and id
+        this.firestoreService.getBox(this.boxId).subscribe({
+          next: (existingBox) => {
+            if (existingBox) {
+              const updatedBox: Box = {
+                ...existingBox,
+                ...boxData,
+                id: this.boxId!
+              };
+              this.firestoreService.updateBox(updatedBox).subscribe({
+                next: () => {
+                  console.log('Box updated successfully!');
+                  this.router.navigate(['/box', this.boxId]);
+                },
+                error: (error) => {
+                  console.error('Error updating box:', error);
+                  this.isSubmitting = false;
+                }
+              });
+            } else {
+              console.error('Box not found');
+              this.isSubmitting = false;
+            }
           },
           error: (error) => {
-            console.error('Error updating box:', error);
+            console.error('Error fetching box for update:', error);
             this.isSubmitting = false;
           }
         });
       } else {
-        this.firestoreService.addBox(box).subscribe({
+        // For new boxes, the service will add the userId automatically
+        this.firestoreService.addBox(boxData).subscribe({
           next: (docRef) => {
             console.log('Box added successfully!');
             this.router.navigate(['/boxes']);
