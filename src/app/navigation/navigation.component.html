@@ -52,8 +52,9 @@
             </svg>
           </button>
 
-          <span class="text-sm text-gray-600 dark:text-neutral-300 transition-colors duration-200">Welcome,
-            {{ user.displayName || user.email }}</span>
+          <span class="text-sm text-gray-600 dark:text-neutral-300 transition-colors duration-200">
+            Welcome, {{ name() }}
+          </span>
           <button
             (click)="signOut()"
             class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border border-gray-300 dark:border-neutral-600 hover:border-gray-400 dark:hover:border-neutral-500 flex items-center space-x-2">

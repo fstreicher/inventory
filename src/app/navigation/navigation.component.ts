@@ -1,11 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth.service';
 import { ThemeService } from '../theme.service';
 import { OfflineService } from '../offline.service';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { User } from '@angular/fire/auth';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'inv-navigation',
@@ -31,6 +32,21 @@ export class NavigationComponent {
     { label: 'Search Items', path: '/search' },
     { label: 'Add box', path: '/add-box' },
   ];
+
+  protected name: Signal<string | null> = toSignal(
+    this.authService.user$.pipe(
+      // Map to display name or email
+      map(user => {
+        console.debug('User data:', user);
+        return (
+          user?.displayName?.split(' ')[0] ||
+          user?.email ||
+          'User'
+        );
+      })
+    ),
+    { initialValue: 'User' }
+  );
 
   public toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
