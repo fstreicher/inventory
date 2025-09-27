@@ -4,6 +4,11 @@
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-200">Your Boxes</h1>
       <p class="mt-2 text-sm text-gray-700 dark:text-neutral-300 transition-colors duration-200">
         Manage your storage boxes and their contents.
+        @if (offlineService.isOffline$ | async) {
+          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 ml-2">
+            📴 Working offline - changes will sync when connected
+          </span>
+        }
       </p>
     </div>
     <div class="mt-4 sm:mt-0">

@@ -3,10 +3,23 @@
 
   <head>
     <meta charset="utf-8">
-    <title>Frontend</title>
+    <title>Inventory Manager</title>
     <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Inventory">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+    
+    <!-- Description for offline capability -->
+    <meta name="description" content="Manage your boxes and items inventory, even offline in the basement">
     
     <!-- Dark mode initialization script - runs before page render to prevent flash -->
     <script>
@@ -118,6 +131,16 @@
         <!-- Moon Icon (Dark Mode) -->
         <g id="icon-moon">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </g>
+        
+        <!-- WiFi/Online Icon -->
+        <g id="icon-wifi">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+        </g>
+        
+        <!-- WiFi Off/Offline Icon -->
+        <g id="icon-wifi-off">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18M10.584 10.587a4.5 4.5 0 016.32 6.32M7.05 7.05A9 9 0 0119.424 4.42M12 20h.01M8.111 16.404a5.5 5.5 0 01.4-2.1" />
         </g>
       </defs>
     </svg>

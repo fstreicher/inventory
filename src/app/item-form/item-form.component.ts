@@ -7,9 +7,11 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'inv-item-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './item-form.component.html',
-  styleUrl: './item-form.component.css'
+  imports: [
+    ReactiveFormsModule,
+    RouterLink
+  ],
 })
 export class ItemFormComponent implements OnInit {
   private fb: FormBuilder = inject(FormBuilder);

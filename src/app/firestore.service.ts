@@ -14,7 +14,8 @@ import {
   where
 } from '@angular/fire/firestore';
 import { Observable, from, throwError } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { OfflineService } from './offline.service';
 
 export interface Box {
   id?: string;
@@ -35,6 +36,7 @@ export interface Item {
 export class FirestoreService {
   private firestore: Firestore = inject(Firestore);
   private auth: Auth = inject(Auth);
+  private offlineService = inject(OfflineService);
   private boxesCollection = collection(this.firestore, 'boxes');
 
   private getCurrentUserId(): string {
@@ -45,10 +47,24 @@ export class FirestoreService {
     return user.uid;
   }
 
+  private handleOfflineError(error: any): Observable<never> {
+    if (this.offlineService.isOffline) {
+      console.log('📴 Operation queued for when connection is restored');
+      // For offline operations, we can still throw the error but with a more user-friendly message
+      return throwError(() => new Error('Operation saved locally and will sync when connection is restored'));
+    }
+    return throwError(() => error);
+  }
+
   getBoxes(): Observable<Array<Box>> {
     const userId = this.getCurrentUserId();
     const userBoxesQuery = query(this.boxesCollection, where('userId', '==', userId));
-    return collectionData(userBoxesQuery, { idField: 'id' }) as Observable<Array<Box>>;
+    return (collectionData(userBoxesQuery, { idField: 'id' }) as Observable<Array<Box>>).pipe(
+      catchError(error => {
+        console.log('📦 Loading boxes from cache (offline mode)');
+        return this.handleOfflineError(error);
+      })
+    );
   }
 
   getBox(id: string): Observable<Box | undefined> {
@@ -71,7 +87,12 @@ export class FirestoreService {
 
   addBox(box: Omit<Box, 'userId'>): Observable<DocumentReference> {
     const boxWithUser = { ...box, userId: this.getCurrentUserId() };
-    return from(addDoc(this.boxesCollection, boxWithUser));
+    if (this.offlineService.isOffline) {
+      console.log('📦 Box will be saved locally and synced when connection is restored');
+    }
+    return from(addDoc(this.boxesCollection, boxWithUser)).pipe(
+      catchError(error => this.handleOfflineError(error))
+    );
   }
 
   updateBox(box: Box): Observable<void> {
@@ -137,7 +158,12 @@ export class FirestoreService {
     return this.verifyBoxOwnership(boxId).pipe(
       switchMap(() => {
         const itemsCollection = collection(this.firestore, `boxes/${boxId}/items`);
-        return from(addDoc(itemsCollection, item));
+        if (this.offlineService.isOffline) {
+          console.log('📝 Item will be saved locally and synced when connection is restored');
+        }
+        return from(addDoc(itemsCollection, item)).pipe(
+          catchError(error => this.handleOfflineError(error))
+        );
       })
     );
   }

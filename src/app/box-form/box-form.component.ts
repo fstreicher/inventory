@@ -7,9 +7,11 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'inv-box-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './box-form.component.html',
-  styleUrl: './box-form.component.css'
+  imports: [
+    ReactiveFormsModule,
+    RouterLink
+  ],
 })
 export class BoxFormComponent implements OnInit {
   private fb: FormBuilder = inject(FormBuilder);
@@ -43,7 +45,7 @@ export class BoxFormComponent implements OnInit {
     if (this.boxForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
       const boxData = this.boxForm.value;
-      
+
       if (this.boxId) {
         // For updates, we need to preserve the existing userId and id
         this.firestoreService.getBox(this.boxId).subscribe({

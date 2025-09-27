@@ -13,9 +13,12 @@ export interface ItemWithBox {
 @Component({
   selector: 'inv-item-search',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './item-search.component.html',
-  styleUrl: './item-search.component.css'
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink
+  ],
 })
 export class ItemSearchComponent {
   private fb: FormBuilder = inject(FormBuilder);
@@ -37,7 +40,7 @@ export class ItemSearchComponent {
         if (!query || query.trim().length < 2) {
           return new Observable<Array<ItemWithBox>>(observer => observer.next([]));
         }
-        
+
         this.isLoading = true;
         return this.searchItems(query.trim().toLowerCase());
       })
@@ -64,7 +67,7 @@ export class ItemSearchComponent {
             this.isLoading = false;
             // Flatten the array and filter by search query
             const flatItems = allItemsWithBoxes.flat();
-            return flatItems.filter(({ item }) => 
+            return flatItems.filter(({ item }) =>
               item.name.toLowerCase().includes(query) ||
               (item.description && item.description.toLowerCase().includes(query))
             );
@@ -80,7 +83,7 @@ export class ItemSearchComponent {
 
   highlightMatch(text: string, query: string): string {
     if (!query || !text) return text;
-    
+
     const regex = new RegExp(`(${query})`, 'gi');
     return text.replace(regex, '<mark class="bg-yellow-200 rounded">$1</mark>');
   }
