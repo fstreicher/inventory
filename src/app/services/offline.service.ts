@@ -23,28 +23,28 @@ export class OfflineService {
   /**
    * Observable that emits true when online, false when offline
    */
-  get isOnline$(): Observable<boolean> {
+  public get isOnline$(): Observable<boolean> {
     return this.#isOnline$.asObservable();
   }
   
   /**
    * Current online status
    */
-  get isOnline(): boolean {
+  public get isOnline(): boolean {
     return this.#isOnline$.value;
   }
   
   /**
    * Observable that emits true when offline, false when online
    */
-  get isOffline$(): Observable<boolean> {
+  public get isOffline$(): Observable<boolean> {
     return this.#isOnline$.pipe(map(online => !online));
   }
   
   /**
    * Current offline status
    */
-  get isOffline(): boolean {
+  public get isOffline(): boolean {
     return !this.#isOnline$.value;
   }
 }

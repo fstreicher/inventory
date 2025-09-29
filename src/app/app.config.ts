@@ -17,7 +17,7 @@ export const appConfig: ApplicationConfig = {
       if (!environment.production) {
         // Connect to auth emulator in development - only if not already connected
         try {
-          connectAuthEmulator(auth, `http://localhost:${firebase.emulators.auth.port}`);
+          connectAuthEmulator(auth, `http://${environment.emulatorHost}:${firebase.emulators.auth.port}`);
         } catch (error) {
           // Emulator already connected, ignore error
           console.log('Auth emulator already connected');
@@ -37,7 +37,7 @@ export const appConfig: ApplicationConfig = {
       if (!environment.production) {
         // Connect to emulator in development - only if not already connected
         try {
-          connectFirestoreEmulator(firestore, 'localhost', firebase.emulators.firestore.port);
+          connectFirestoreEmulator(firestore, environment.emulatorHost, firebase.emulators.firestore.port);
         } catch (error) {
           // Emulator already connected, ignore error
           console.log('Firestore emulator already connected');

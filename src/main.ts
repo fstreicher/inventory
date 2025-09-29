@@ -1,30 +1,52 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
+import { environment } from './environments/environment';
 
-// Register service worker for offline functionality
+// Handle service worker registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('📦 Service Worker registered successfully:', registration.scope);
-        
-        // Check for updates
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          if (newWorker) {
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                console.log('📦 New app version available! Reload to update.');
-                // You could show a toast notification here
-              }
-            });
-          }
+    if (environment.production) {
+      // Register service worker only in production
+      navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+          console.log('📦 Service Worker registered successfully:', registration.scope);
+          
+          // Check for updates
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('📦 New app version available! Reload to update.');
+                  // You could show a toast notification here
+                }
+              });
+            }
+          });
+        })
+        .catch((error) => {
+          console.log('📦 Service Worker registration failed:', error);
         });
-      })
-      .catch((error) => {
-        console.log('📦 Service Worker registration failed:', error);
+    } else {
+      // In development, unregister any existing service workers and clear caches
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => {
+          console.log('📦 Unregistering service worker for development');
+          registration.unregister();
+        });
       });
+      
+      // Clear all caches in development
+      if ('caches' in window) {
+        caches.keys().then((cacheNames) => {
+          cacheNames.forEach((cacheName) => {
+            console.log('🗑️ Clearing cache:', cacheName);
+            caches.delete(cacheName);
+          });
+        });
+      }
+    }
   });
 }
 
