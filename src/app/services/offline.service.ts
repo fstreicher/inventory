@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, fromEvent, Observable, map, startWith } from 'rxjs';
+import { BehaviorSubject, fromEvent, map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OfflineService {
-  #isOnline$ = new BehaviorSubject<boolean>(navigator.onLine);
+  readonly #isOnline$ = new BehaviorSubject<boolean>(navigator.onLine);
   
   constructor() {
     // Listen to online/offline events
     fromEvent(window, 'online').subscribe(() => {
       this.#isOnline$.next(true);
-      console.log('📡 Connection restored - data will sync automatically');
+      console.debug('📡 Connection restored - data will sync automatically');
     });
     
     fromEvent(window, 'offline').subscribe(() => {
       this.#isOnline$.next(false);
-      console.log('📴 Offline mode - changes will be saved locally and synced when connection is restored');
+      console.debug('📴 Offline mode - changes will be saved locally and synced when connection is restored');
     });
   }
   

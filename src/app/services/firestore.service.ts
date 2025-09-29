@@ -15,31 +15,31 @@ import {
 } from '@angular/fire/firestore';
 import { Observable, from, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { OfflineService } from './offline.service';
 import { EncryptionService } from './encryption.service';
+import { OfflineService } from './offline.service';
 
-export interface Box {
+export type Box = {
   id?: string;
   name: string;
-  description: string;
+  description?: string;
   userId: string;
 }
 
-export interface Item {
+export type Item = {
   id?: string;
   name: string;
-  description: string;
+  description?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
-  #firestore: Firestore = inject(Firestore);
-  #auth: Auth = inject(Auth);
-  #offlineService = inject(OfflineService);
-  #encryptionService = inject(EncryptionService);
-  #boxesCollection = collection(this.#firestore, 'boxes');
+  readonly #firestore: Firestore = inject(Firestore);
+  readonly #auth: Auth = inject(Auth);
+  readonly #offlineService = inject(OfflineService);
+  readonly #encryptionService = inject(EncryptionService);
+  readonly #boxesCollection = collection(this.#firestore, 'boxes');
 
   #getCurrentUserId(): string {
     const user = this.#auth.currentUser;
@@ -49,16 +49,16 @@ export class FirestoreService {
     return user.uid;
   }
 
-  #handleOfflineError(error: any): Observable<never> {
+  #handleOfflineError(error: unknown): Observable<never> {
     if (this.#offlineService.isOffline) {
-      console.log('📴 Operation queued for when connection is restored');
+      console.debug('📴 Operation queued for when connection is restored');
       // For offline operations, we can still throw the error but with a more user-friendly message
       return throwError(() => new Error('Operation saved locally and will sync when connection is restored'));
     }
     return throwError(() => error);
   }
 
-  async #encryptBox(box: Omit<Box, 'userId'>): Promise<any> {
+  async #encryptBox(box: Box): Promise<Box> {
     return {
       name: await this.#encryptionService.encryptText(box.name),
       description: await this.#encryptionService.encryptText(box.description),
@@ -66,7 +66,7 @@ export class FirestoreService {
     };
   }
 
-  async #decryptBox(encryptedBox: any): Promise<Box> {
+  async #decryptBox(encryptedBox: Box): Promise<Box> {
     return {
       ...encryptedBox,
       name: await this.#encryptionService.decryptText(encryptedBox.name),
@@ -74,14 +74,14 @@ export class FirestoreService {
     };
   }
 
-  async #encryptItem(item: Item): Promise<any> {
+  async #encryptItem(item: Item): Promise<Item> {
     return {
       name: await this.#encryptionService.encryptText(item.name),
       description: await this.#encryptionService.encryptText(item.description)
     };
   }
 
-  async #decryptItem(encryptedItem: any): Promise<Item> {
+  async #decryptItem(encryptedItem: Item): Promise<Item> {
     return {
       ...encryptedItem,
       name: await this.#encryptionService.decryptText(encryptedItem.name),
@@ -92,12 +92,11 @@ export class FirestoreService {
   public getBoxes(): Observable<Array<Box>> {
     const userId = this.#getCurrentUserId();
     const userBoxesQuery = query(this.#boxesCollection, where('userId', '==', userId));
-    return (collectionData(userBoxesQuery, { idField: 'id' }) as Observable<Array<any>>).pipe(
-      switchMap(encryptedBoxes => 
-        from(Promise.all(encryptedBoxes.map(box => this.#decryptBox(box))))
-      ),
+    return (collectionData(userBoxesQuery, { idField: 'id' }) as Observable<Array<Box>>).pipe(
+      switchMap(encryptedBoxes =>
+        from(Promise.all(encryptedBoxes.map(box => this.#decryptBox(box))))),
       catchError(error => {
-        console.log('📦 Loading boxes from cache (offline mode)');
+        console.debug('📦 Loading boxes from cache (offline mode)');
         return this.#handleOfflineError(error);
       })
     );
@@ -108,7 +107,7 @@ export class FirestoreService {
     return from(getDoc(boxDocRef)).pipe(
       switchMap(snapshot => {
         if (snapshot.exists()) {
-          const encryptedBox = { id: snapshot.id, ...snapshot.data() } as any;
+          const encryptedBox = { id: snapshot.id, ...snapshot.data() as Box };
           // Verify the box belongs to the current user
           if (encryptedBox.userId !== this.#getCurrentUserId()) {
             throw new Error('Access denied: Box does not belong to current user');
@@ -121,11 +120,11 @@ export class FirestoreService {
     );
   }
 
-  public addBox(box: Omit<Box, 'userId'>): Observable<DocumentReference> {
+  public addBox(box: Box): Observable<DocumentReference> {
     return from(this.#encryptBox(box)).pipe(
       switchMap(encryptedBox => {
         if (this.#offlineService.isOffline) {
-          console.log('📦 Box will be saved locally and synced when connection is restored');
+          console.debug('📦 Box will be saved locally and synced when connection is restored');
         }
         return from(addDoc(this.#boxesCollection, encryptedBox));
       }),
@@ -139,8 +138,7 @@ export class FirestoreService {
       throw new Error('Access denied: Cannot update box that does not belong to current user');
     }
     const boxDocRef = doc(this.#firestore, `boxes/${box.id}`);
-    const { id, userId, ...boxData } = box;
-    return from(this.#encryptBox(boxData)).pipe(
+    return from(this.#encryptBox(box)).pipe(
       switchMap(encryptedBox => from(updateDoc(boxDocRef, encryptedBox)))
     );
   }
@@ -173,10 +171,9 @@ export class FirestoreService {
     return this.#verifyBoxOwnership(boxId).pipe(
       switchMap(() => {
         const itemsCollection = collection(this.#firestore, `boxes/${boxId}/items`);
-        return (collectionData(itemsCollection, { idField: 'id' }) as Observable<Array<any>>).pipe(
-          switchMap(encryptedItems => 
-            from(Promise.all(encryptedItems.map(item => this.#decryptItem(item))))
-          )
+        return (collectionData(itemsCollection, { idField: 'id' }) as Observable<Array<Item>>).pipe(
+          switchMap(encryptedItems =>
+            from(Promise.all(encryptedItems.map(item => this.#decryptItem(item)))))
         );
       })
     );
@@ -189,7 +186,7 @@ export class FirestoreService {
         return from(getDoc(itemDocRef)).pipe(
           switchMap(snapshot => {
             if (snapshot.exists()) {
-              const encryptedItem = { id: snapshot.id, ...snapshot.data() } as any;
+              const encryptedItem = { id: snapshot.id, ...snapshot.data() as Item };
               return from(this.#decryptItem(encryptedItem));
             } else {
               return from(Promise.resolve(undefined));
@@ -205,7 +202,7 @@ export class FirestoreService {
       switchMap(() => {
         const itemsCollection = collection(this.#firestore, `boxes/${boxId}/items`);
         if (this.#offlineService.isOffline) {
-          console.log('📝 Item will be saved locally and synced when connection is restored');
+          console.debug('📝 Item will be saved locally and synced when connection is restored');
         }
         return from(this.#encryptItem(item)).pipe(
           switchMap(encryptedItem => from(addDoc(itemsCollection, encryptedItem))),
@@ -219,8 +216,7 @@ export class FirestoreService {
     return this.#verifyBoxOwnership(boxId).pipe(
       switchMap(() => {
         const itemDocRef = doc(this.#firestore, `boxes/${boxId}/items/${item.id}`);
-        const { id, ...itemData } = item;
-        return from(this.#encryptItem(itemData)).pipe(
+        return from(this.#encryptItem(item)).pipe(
           switchMap(encryptedItem => from(updateDoc(itemDocRef, encryptedItem)))
         );
       })

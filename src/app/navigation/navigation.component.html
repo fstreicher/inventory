@@ -10,9 +10,10 @@
         @if (user$ | async; as user) {
           <div class="hidden md:ml-10 md:flex md:items-baseline md:space-x-4">
             @for (navItem of navItems; track $index) {
-              <a [routerLink]="navItem.path"
+              <a
+                class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                 routerLinkActive="bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300"
-                class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                [routerLink]="navItem.path">
                 {{ navItem.label }}
               </a>
             }
@@ -28,14 +29,14 @@
             @if (isOnline$ | async) {
               <div class="flex items-center space-x-1 text-green-600 dark:text-green-400">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <use href="#icon-wifi"></use>
+                  <use href="#icon-wifi" />
                 </svg>
                 <span class="text-xs font-medium">Online</span>
               </div>
             } @else {
               <div class="flex items-center space-x-1 text-amber-600 dark:text-amber-400">
                 <svg class="h-4 w-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <use href="#icon-wifi-off"></use>
+                  <use href="#icon-wifi-off" />
                 </svg>
                 <span class="text-xs font-medium">Offline</span>
               </div>
@@ -43,12 +44,20 @@
           </div>
 
           <!-- Theme Toggle -->
-          <button
-            (click)="toggleTheme()"
+          <a
             class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
-            [title]="'Theme: ' + getThemeLabel()">
+            routerLink="/scan"
+            title="Scan QR Code">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <use [attr.href]="'#' + getThemeIcon()"></use>
+              <use href="#icon-qr-code-scan" />
+            </svg>
+          </a>
+          <button
+            class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
+            [title]="'Theme: ' + getThemeLabel()"
+            (click)="toggleTheme()">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <use [attr.href]="'#' + getThemeIcon()" />
             </svg>
           </button>
 
@@ -56,10 +65,10 @@
             Welcome, {{ name() }}
           </span>
           <button
-            (click)="signOut()"
-            class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border border-gray-300 dark:border-neutral-600 hover:border-gray-400 dark:hover:border-neutral-500 flex items-center space-x-2">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <use href="#icon-logout"></use>
+            class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border border-gray-300 dark:border-neutral-600 hover:border-gray-400 dark:hover:border-neutral-500 flex items-center space-x-2"
+            (click)="signOut()">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <use href="#icon-logout" />
             </svg>
             <span>Sign Out</span>
           </button>
@@ -73,42 +82,50 @@
           @if (isOnline$ | async) {
             <div class="flex items-center space-x-1 text-green-600 dark:text-green-400" title="Online">
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <use href="#icon-wifi"></use>
+                <use href="#icon-wifi" />
               </svg>
             </div>
           } @else {
             <div class="flex items-center space-x-1 text-amber-600 dark:text-amber-400" title="Offline">
               <svg class="h-4 w-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <use href="#icon-wifi-off"></use>
+                <use href="#icon-wifi-off" />
               </svg>
             </div>
           }
 
           <!-- Mobile Theme Toggle -->
-          <button
-            (click)="toggleTheme()"
+          <a
             class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
-            [title]="'Theme: ' + getThemeLabel()">
+            routerLink="/scan"
+            title="Scan QR Code">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <use [attr.href]="'#' + getThemeIcon()"></use>
+              <use href="#icon-qr-code-scan" />
+            </svg>
+          </a>
+          <button
+            class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
+            [title]="'Theme: ' + getThemeLabel()"
+            (click)="toggleTheme()">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <use [attr.href]="'#' + getThemeIcon()" />
             </svg>
           </button>
 
           <button
-            type="button"
-            (click)="toggleMobileMenu()"
             class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 dark:focus:ring-primary-400 transition-colors duration-200"
-            [attr.aria-expanded]="isMobileMenuOpen">
+            type="button"
+            [attr.aria-expanded]="isMobileMenuOpen"
+            (click)="toggleMobileMenu()">
             <span class="sr-only">Open main menu</span>
             @if (!isMobileMenuOpen) {
               <!-- Hamburger icon -->
-              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <use href="#icon-menu"></use>
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <use href="#icon-menu" />
               </svg>
             } @else {
               <!-- Close icon -->
-              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <use href="#icon-close"></use>
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <use href="#icon-close" />
               </svg>
             }
           </button>
@@ -121,10 +138,11 @@
       <div class="md:hidden">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200 dark:border-neutral-700 transition-colors duration-200">
           @for (navItem of navItems; track $index) {
-            <a [routerLink]="navItem.path"
+            <a
+              class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
               routerLinkActive="bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300"
-              (click)="closeMobileMenu()"
-              class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">
+              [routerLink]="navItem.path"
+              (click)="closeMobileMenu()">
               {{ navItem.label }}
             </a>
           }
@@ -135,11 +153,11 @@
                 Welcome, {{ user.displayName || user.email }}
               </div>
               <button
-                (click)="signOut()"
-                class="w-full text-left text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 border border-gray-300 dark:border-neutral-600">
+                class="w-full text-left text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 border border-gray-300 dark:border-neutral-600"
+                (click)="signOut()">
                 <div class="flex items-center space-x-2">
-                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <use href="#icon-logout"></use>
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <use href="#icon-logout" />
                   </svg>
                   <span>Sign Out</span>
                 </div>

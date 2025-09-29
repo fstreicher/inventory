@@ -7,8 +7,8 @@ export type Theme = 'light' | 'dark';
   providedIn: 'root'
 })
 export class ThemeService {
-  #platformId = inject(PLATFORM_ID);
-  #isBrowser = isPlatformBrowser(this.#platformId);
+  readonly #platformId = inject(PLATFORM_ID);
+  readonly #isBrowser = isPlatformBrowser(this.#platformId);
   
   // Reactive signals for theme state
   public theme = signal<Theme>('light');

@@ -10,28 +10,29 @@
 </div>
 
 <!-- Search Form -->
-<div class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
+<div
+  class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg p-6 mb-6 border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
   <form [formGroup]="searchForm">
     <div class="relative">
       <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <svg class="h-5 w-5 text-gray-400 dark:text-neutral-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <use href="#icon-search"></use>
+        <svg class="h-5 w-5 text-gray-400 dark:text-neutral-500 transition-colors duration-200" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24">
+          <use href="#icon-search" />
         </svg>
       </div>
-      <input 
-        type="text" 
+      <input
+        class="block w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 focus:ring-opacity-50 focus:border-primary-500 sm:text-sm placeholder-gray-400 dark:placeholder-neutral-400 transition-all duration-200"
         formControlName="query"
         placeholder="Search items by name or description..."
-        class="block w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 focus:ring-opacity-50 focus:border-primary-500 sm:text-sm placeholder-gray-400 dark:placeholder-neutral-400 transition-all duration-200"
-      >
+        type="text">
       @if (searchForm.get('query')?.value) {
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-          <button 
+          <button
+            class="text-gray-400 dark:text-neutral-500 hover:text-gray-600 dark:hover:text-neutral-400 focus:outline-none transition-colors duration-200"
             type="button"
-            (click)="clearSearch()"
-            class="text-gray-400 dark:text-neutral-500 hover:text-gray-600 dark:hover:text-neutral-400 focus:outline-none transition-colors duration-200">
+            (click)="clearSearch()">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <use href="#icon-close"></use>
+              <use href="#icon-close" />
             </svg>
           </button>
         </div>
@@ -45,10 +46,11 @@
 
 <!-- Loading State -->
 @if (isLoading) {
-  <div class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg p-8 border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
+  <div
+    class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg p-8 border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
     <div class="flex items-center justify-center">
       <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24">
-        <use href="#icon-spinner"></use>
+        <use href="#icon-spinner" />
       </svg>
       <span class="text-gray-600 dark:text-neutral-300 transition-colors duration-200">Searching...</span>
     </div>
@@ -58,10 +60,12 @@
 <!-- Search Results -->
 @if (searchResults$ | async; as results) {
   @if (results.length === 0 && searchForm.get('query')?.value && searchForm.get('query')?.value.length >= 2 && !isLoading) {
-    <div class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg p-8 border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
+    <div
+      class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg p-8 border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
       <div class="text-center">
-        <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-neutral-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <use href="#icon-search"></use>
+        <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-neutral-500 transition-colors duration-200" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24">
+          <use href="#icon-search" />
         </svg>
         <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white transition-colors duration-200">No items found</h3>
         <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400 transition-colors duration-200">
@@ -69,70 +73,80 @@
         </p>
       </div>
     </div>
-  } @else if (results.length > 0) {
-    <div class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
-      <div class="px-4 py-5 sm:p-6">
-        <div class="mb-4">
-          <h2 class="text-lg font-medium text-gray-900 dark:text-white transition-colors duration-200">Search Results</h2>
-          <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400 transition-colors duration-200">
-            Found {{ results.length }} item{{ results.length === 1 ? '' : 's' }} matching "{{ searchForm.get('query')?.value }}"
-          </p>
-        </div>
-        
-        <div class="space-y-4">
-          @for (result of results; track result.item.id) {
-            <div class="border border-gray-200 dark:border-neutral-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors duration-200">
-              <div class="flex items-start justify-between">
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center space-x-3 mb-2">
-                    <div class="flex-shrink-0">
-                      <div class="h-8 w-8 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center transition-colors duration-200">
-                        <svg class="h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <use href="#icon-document"></use>
-                        </svg>
+    } @else if (results.length > 0) {
+      <div
+        class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="mb-4">
+            <h2 class="text-lg font-medium text-gray-900 dark:text-white transition-colors duration-200">Search Results</h2>
+            <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400 transition-colors duration-200">
+              Found {{ results.length }} item{{ results.length === 1 ? '' : 's' }} matching "{{ searchForm.get('query')?.value }}"
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            @for (result of results; track result.item.id) {
+              <div
+                class="border border-gray-200 dark:border-neutral-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors duration-200">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center space-x-3 mb-2">
+                      <div class="flex-shrink-0">
+                        <div
+                          class="h-8 w-8 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center transition-colors duration-200">
+                          <svg class="h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <use href="#icon-document" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <h4
+                          class="text-sm font-medium text-gray-900 dark:text-white transition-colors duration-200"
+                          [innerHTML]="highlightMatch(result.item.name, searchForm.get('query')?.value)"></h4>
+                        @if (result.item.description) {
+                          <p class="text-sm text-gray-500 dark:text-neutral-400 mt-1 transition-colors duration-200"
+                            [innerHTML]="highlightMatch(result.item.description, searchForm.get('query')?.value)"></p>
+                        }
                       </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                      <h4 class="text-sm font-medium text-gray-900 dark:text-white transition-colors duration-200" [innerHTML]="highlightMatch(result.item.name, searchForm.get('query')?.value)"></h4>
-                      @if (result.item.description) {
-                        <p class="text-sm text-gray-500 dark:text-neutral-400 mt-1 transition-colors duration-200" [innerHTML]="highlightMatch(result.item.description, searchForm.get('query')?.value)"></p>
-                      }
+
+                    <!-- Box Information -->
+                    <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-neutral-400 transition-colors duration-200">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <use href="#icon-box" />
+                      </svg>
+                      <span>Found in box:</span>
+                      <a
+                        class="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-medium transition-colors duration-200"
+                        [routerLink]="['/box', result.box.id]">
+                        {{ result.box.name }}
+                      </a>
                     </div>
                   </div>
-                  
-                  <!-- Box Information -->
-                  <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-neutral-400 transition-colors duration-200">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <use href="#icon-box"></use>
-                    </svg>
-                    <span>Found in box:</span>
-                    <a [routerLink]="['/box', result.box.id]" class="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-medium transition-colors duration-200">
-                      {{ result.box.name }}
+
+                  <div class="ml-4 flex-shrink-0 flex space-x-2">
+                    <a
+                      class="text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
+                      title="Edit item"
+                      [routerLink]="['/box', result.box.id, 'edit-item', result.item.id]">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <use href="#icon-edit" />
+                      </svg>
+                    </a>
+                    <a
+                      class="text-gray-400 dark:text-neutral-500 hover:text-green-500 dark:hover:text-green-400 transition-colors duration-200"
+                      title="View box"
+                      [routerLink]="['/box', result.box.id]">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <use href="#icon-eye" />
+                      </svg>
                     </a>
                   </div>
                 </div>
-                
-                <div class="ml-4 flex-shrink-0 flex space-x-2">
-                  <a [routerLink]="['/box', result.box.id, 'edit-item', result.item.id]" 
-                     class="text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
-                     title="Edit item">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <use href="#icon-edit"></use>
-                    </svg>
-                  </a>
-                  <a [routerLink]="['/box', result.box.id]" 
-                     class="text-gray-400 dark:text-neutral-500 hover:text-green-500 dark:hover:text-green-400 transition-colors duration-200"
-                     title="View box">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <use href="#icon-eye"></use>
-                    </svg>
-                  </a>
-                </div>
               </div>
-            </div>
-          }
+            }
+          </div>
         </div>
       </div>
-    </div>
-  }
-}
+      }
+      }

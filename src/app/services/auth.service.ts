@@ -8,20 +8,20 @@ import { EncryptionService } from './encryption.service';
   providedIn: 'root'
 })
 export class AuthService {
-  #auth: Auth = inject(Auth);
-  #router: Router = inject(Router);
-  #encryptionService = inject(EncryptionService);
-  
+  readonly #auth: Auth = inject(Auth);
+  readonly #router: Router = inject(Router);
+  readonly #encryptionService = inject(EncryptionService);
+
   // Observable of the current user
   public user$: Observable<User | null> = user(this.#auth);
-  
+
   constructor() {
     // Subscribe to auth state changes
-    this.user$.subscribe(user => {
-      if (user) {
-        console.log('User signed in:', user.displayName);
+    this.user$.subscribe(firebaseUser => {
+      if (firebaseUser) {
+        console.debug('User signed in:', firebaseUser.displayName);
       } else {
-        console.log('User signed out');
+        console.debug('User signed out');
       }
     });
   }
@@ -32,13 +32,13 @@ export class AuthService {
       provider.setCustomParameters({
         prompt: 'select_account'
       });
-      
+
       const result = await signInWithPopup(this.#auth, provider);
-      console.log('Sign in successful:', result.user.displayName);
-      
+      console.debug('Sign in successful:', result.user.displayName);
+
       // Redirect to main app after successful login
       this.#router.navigate(['/boxes']);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Sign in failed:', error);
       throw error;
     }
@@ -48,13 +48,13 @@ export class AuthService {
     try {
       // Clear encryption keys before signing out
       this.#encryptionService.clearKeyCache();
-      
+
       await signOut(this.#auth);
-      console.log('Sign out successful');
-      
+      console.debug('Sign out successful');
+
       // Redirect to login page
       this.#router.navigate(['/login']);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Sign out failed:', error);
       throw error;
     }

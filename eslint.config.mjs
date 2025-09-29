@@ -35,7 +35,7 @@ export default defineConfig(
     ],
     rules: {
       'function-paren-newline': ['warn', 'consistent'],
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': ['warn', { allow: ['debug', 'warn', 'error'] }],
       'no-warning-comments': 'warn',
       'object-shorthand': 'warn',
       'prefer-template': 'warn',

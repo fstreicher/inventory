@@ -1,26 +1,28 @@
-import { Component, inject } from '@angular/core';
-import { FirestoreService, Box } from '../firestore.service';
-import { OfflineService } from '../offline.service';
-import { Observable, map, startWith } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Observable, map, startWith } from 'rxjs';
+import { Box, FirestoreService } from '../services/firestore.service';
+import { OfflineService } from '../services/offline.service';
 
-interface BoxListState {
+type BoxListState = {
   loading: boolean;
-  boxes: Box[];
+  boxes: Array<Box>;
 }
 
 @Component({
   selector: 'inv-box-list',
-  standalone: true,
   templateUrl: './box-list.component.html',
-  imports: [CommonModule, RouterLink],
+  imports: [
+    CommonModule,
+    RouterLink,
+  ],
 })
 export class BoxListComponent {
-  private firestoreService: FirestoreService = inject(FirestoreService);
+  readonly #firestoreService: FirestoreService = inject(FirestoreService);
   protected offlineService = inject(OfflineService);
 
-  boxState$: Observable<BoxListState> = this.firestoreService.getBoxes().pipe(
+  protected boxState$: Observable<BoxListState> = this.#firestoreService.getBoxes().pipe(
     map(boxes => ({ loading: false, boxes })),
     startWith({ loading: true, boxes: [] })
   );

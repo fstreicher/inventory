@@ -1,87 +1,84 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FirestoreService, Item, Box } from '../firestore.service';
-import { Observable, combineLatest, map, startWith, switchMap } from 'rxjs';
-import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { Observable, combineLatest, map, of, startWith, switchMap } from 'rxjs';
+import { Box, FirestoreService, Item } from '../services/firestore.service';
 
-export interface ItemWithBox {
+export type ItemWithBox = {
   item: Item;
   box: Box;
 }
 
 @Component({
   selector: 'inv-item-search',
-  standalone: true,
   templateUrl: './item-search.component.html',
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink
+    RouterLink,
   ],
 })
 export class ItemSearchComponent {
-  private fb: FormBuilder = inject(FormBuilder);
-  private firestoreService: FirestoreService = inject(FirestoreService);
+  readonly #fb: FormBuilder = inject(FormBuilder);
+  readonly #firestoreService: FirestoreService = inject(FirestoreService);
 
-  searchForm: FormGroup;
-  searchResults$: Observable<ItemWithBox[]>;
-  isLoading = false;
+  protected searchForm: FormGroup;
+  protected searchResults$: Observable<Array<ItemWithBox>>;
+  protected isLoading = false;
 
   constructor() {
-    this.searchForm = this.fb.group({
+    this.searchForm = this.#fb.group({
       query: ['']
     });
 
     // Create search observable that reacts to form changes
     this.searchResults$ = this.searchForm.get('query')!.valueChanges.pipe(
-      startWith(''),
-      switchMap(query => {
+      switchMap((query: string) => {
         if (!query || query.trim().length < 2) {
-          return new Observable<Array<ItemWithBox>>(observer => observer.next([]));
+          return of([]);
         }
 
         this.isLoading = true;
-        return this.searchItems(query.trim().toLowerCase());
-      })
+        return this.#searchItems(query.trim().toLowerCase());
+      }),
+      startWith([]),
     );
   }
 
-  private searchItems(query: string): Observable<ItemWithBox[]> {
-    return this.firestoreService.getBoxes().pipe(
-      switchMap(boxes => {
+  #searchItems(query: string): Observable<Array<ItemWithBox>> {
+    return this.#firestoreService.getBoxes().pipe(
+      switchMap((boxes: Array<Box>) => {
         if (boxes.length === 0) {
           this.isLoading = false;
-          return new Observable<Array<ItemWithBox>>(observer => observer.next([]));
+          return of([]);
         }
 
         // Get items from all boxes
-        const itemObservables = boxes.map(box =>
-          this.firestoreService.getItems(box.id!).pipe(
-            map(items => items.map(item => ({ item, box })))
-          )
-        );
+        const itemObservables: Array<Observable<Array<ItemWithBox>>> = boxes.map((box: Box) =>
+          this.#firestoreService.getItems(box.id!).pipe(
+            map((items: Array<Item>) => items.map((item: Item) => ({ item, box })))
+          ));
 
         return combineLatest(itemObservables).pipe(
-          map(allItemsWithBoxes => {
+          map((allItemsWithBoxes: Array<Array<ItemWithBox>>) => {
             this.isLoading = false;
             // Flatten the array and filter by search query
             const flatItems = allItemsWithBoxes.flat();
-            return flatItems.filter(({ item }) =>
+            return flatItems.filter(({ item }: ItemWithBox) =>
               item.name.toLowerCase().includes(query) ||
-              (item.description && item.description.toLowerCase().includes(query))
-            );
+              (item.description?.toLowerCase().includes(query)));
           })
         );
       })
     );
   }
 
-  clearSearch(): void {
+  protected clearSearch(): void {
     this.searchForm.get('query')?.setValue('');
   }
 
-  highlightMatch(text: string, query: string): string {
+  protected highlightMatch(text: string, query: string): string {
     if (!query || !text) return text;
 
     const regex = new RegExp(`(${query})`, 'gi');

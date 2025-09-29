@@ -18,9 +18,9 @@ export const appConfig: ApplicationConfig = {
         // Connect to auth emulator in development - only if not already connected
         try {
           connectAuthEmulator(auth, `http://${environment.emulatorHost}:${firebase.emulators.auth.port}`);
-        } catch (error) {
+        } catch (error: unknown) {
           // Emulator already connected, ignore error
-          console.log('Auth emulator already connected');
+          console.warn('Auth emulator already connected', error);
         }
       }
       return auth;
@@ -33,17 +33,17 @@ export const appConfig: ApplicationConfig = {
           tabManager: persistentMultipleTabManager()
         })
       });
-      
+
       if (!environment.production) {
         // Connect to emulator in development - only if not already connected
         try {
           connectFirestoreEmulator(firestore, environment.emulatorHost, firebase.emulators.firestore.port);
-        } catch (error) {
+        } catch (error: unknown) {
           // Emulator already connected, ignore error
-          console.log('Firestore emulator already connected');
+          console.warn('Firestore emulator already connected', error);
         }
       }
-      
+
       return firestore;
     }),
   ]

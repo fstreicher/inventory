@@ -10,15 +10,15 @@ if ('serviceWorker' in navigator) {
       // Register service worker only in production
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
-          console.log('📦 Service Worker registered successfully:', registration.scope);
-          
+          console.debug('📦 Service Worker registered successfully:', registration.scope);
+
           // Check for updates
           registration.addEventListener('updatefound', () => {
             const newWorker = registration.installing;
             if (newWorker) {
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('📦 New app version available! Reload to update.');
+                  console.debug('📦 New app version available! Reload to update.');
                   // You could show a toast notification here
                 }
               });
@@ -26,22 +26,22 @@ if ('serviceWorker' in navigator) {
           });
         })
         .catch((error) => {
-          console.log('📦 Service Worker registration failed:', error);
+          console.debug('📦 Service Worker registration failed:', error);
         });
     } else {
       // In development, unregister any existing service workers and clear caches
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         registrations.forEach((registration) => {
-          console.log('📦 Unregistering service worker for development');
+          console.debug('📦 Unregistering service worker for development');
           registration.unregister();
         });
       });
-      
+
       // Clear all caches in development
       if ('caches' in window) {
         caches.keys().then((cacheNames) => {
           cacheNames.forEach((cacheName) => {
-            console.log('🗑️ Clearing cache:', cacheName);
+            console.debug('🗑️ Clearing cache:', cacheName);
             caches.delete(cacheName);
           });
         });

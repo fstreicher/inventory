@@ -1,50 +1,51 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FirestoreService, Item, Box } from '../firestore.service';
-import { CommonModule } from '@angular/common';
+import { Box, FirestoreService, Item } from '../services/firestore.service';
 
 @Component({
   selector: 'inv-item-form',
-  standalone: true,
   templateUrl: './item-form.component.html',
   imports: [
     ReactiveFormsModule,
-    RouterLink
+    RouterLink,
   ],
 })
 export class ItemFormComponent implements OnInit {
-  private fb: FormBuilder = inject(FormBuilder);
-  private firestoreService: FirestoreService = inject(FirestoreService);
-  private route: ActivatedRoute = inject(ActivatedRoute);
-  private router: Router = inject(Router);
+  readonly #fb: FormBuilder = inject(FormBuilder);
+  readonly #firestoreService: FirestoreService = inject(FirestoreService);
+  readonly #route: ActivatedRoute = inject(ActivatedRoute);
+  readonly #router: Router = inject(Router);
 
-  itemForm: FormGroup;
-  boxId: string = '';
-  itemId: string | null = null;
-  boxName: string = '';
-  isSubmitting: boolean = false;
+  protected itemForm: FormGroup<{
+    name: FormControl<string>;
+    description: FormControl<string | null>;
+  }>;
+  protected boxId: string = '';
+  protected itemId: string | null = null;
+  protected boxName: string = '';
+  protected isSubmitting: boolean = false;
 
   constructor() {
-    this.itemForm = this.fb.group({
-      name: ['', Validators.required],
-      description: ['']
+    this.itemForm = this.#fb.group({
+      name: new FormControl('', { validators: [Validators.required], nonNullable: true }),
+      description: new FormControl(''),
     });
   }
 
-  ngOnInit(): void {
-    this.boxId = this.route.snapshot.paramMap.get('id') as string;
-    this.itemId = this.route.snapshot.paramMap.get('itemId');
+  public ngOnInit(): void {
+    this.boxId = this.#route.snapshot.paramMap.get('id') as string;
+    this.itemId = this.#route.snapshot.paramMap.get('itemId');
 
     // Load box information for breadcrumb
-    this.firestoreService.getBox(this.boxId).subscribe(box => {
+    this.#firestoreService.getBox(this.boxId).subscribe((box: Box | undefined) => {
       if (box) {
-        this.boxName = box.name;
+        this.boxName = box.name!;
       }
     });
 
     if (this.itemId) {
-      this.firestoreService.getItem(this.boxId, this.itemId).subscribe(item => {
+      this.#firestoreService.getItem(this.boxId, this.itemId).subscribe((item: Item | undefined) => {
         if (item) {
           this.itemForm.patchValue(item);
         }
@@ -52,28 +53,28 @@ export class ItemFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     if (this.itemForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
-      const item: Item = this.itemForm.value;
+      const item = this.itemForm.value as Item;
       if (this.itemId) {
-        this.firestoreService.updateItem(this.boxId, { ...item, id: this.itemId }).subscribe({
+        this.#firestoreService.updateItem(this.boxId, { ...item, id: this.itemId }).subscribe({
           next: () => {
-            console.log('Item updated successfully!');
-            this.router.navigate(['/box', this.boxId]);
+            console.debug('Item updated successfully!');
+            this.#router.navigate(['/box', this.boxId]);
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error updating item:', error);
             this.isSubmitting = false;
           }
         });
       } else {
-        this.firestoreService.addItem(this.boxId, item).subscribe({
-          next: (docRef) => {
-            console.log('Item added successfully!');
-            this.router.navigate(['/box', this.boxId]);
+        this.#firestoreService.addItem(this.boxId, item).subscribe({
+          next: () => {
+            console.debug('Item added successfully!');
+            this.#router.navigate(['/box', this.boxId]);
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error adding item:', error);
             this.isSubmitting = false;
           }
@@ -82,7 +83,7 @@ export class ItemFormComponent implements OnInit {
     }
   }
 
-  cancel(): void {
-    this.router.navigate(['/box', this.boxId]);
+  protected cancel(): void {
+    this.#router.navigate(['/box', this.boxId]);
   }
 }
