@@ -126,10 +126,27 @@ export class QrScannerComponent implements AfterViewInit {
 
           // Navigate to the scanned URL or handle the barcode data
           if (scannedBarcode.rawValue.startsWith('http')) {
-            await this.#router.navigateByUrl(scannedBarcode.rawValue);
+            // Extract box ID from URL if it's a URL to our app
+            const boxId = this.#extractBoxIdFromUrl(scannedBarcode.rawValue);
+            if (boxId) {
+              console.debug('Navigating to box:', boxId);
+              await this.#router.navigate(['/box', boxId]);
+            } else {
+              console.debug('Scanned URL does not contain a valid box ID:', scannedBarcode.rawValue);
+              alert('QR code does not contain a valid box ID');
+              await this.#router.navigate(['/']);
+            }
           } else {
-            console.debug('Scanned non-URL barcode:', scannedBarcode.rawValue);
-            await this.#router.navigate(['/']);
+            // Assume it's a direct box ID
+            const boxId = scannedBarcode.rawValue.trim();
+            if (this.#isValidBoxId(boxId)) {
+              console.debug('Navigating to box:', boxId);
+              await this.#router.navigate(['/box', boxId]);
+            } else {
+              console.debug('Scanned value is not a valid box ID:', scannedBarcode.rawValue);
+              alert(`Scanned value "${boxId}" is not a valid box ID`);
+              await this.#router.navigate(['/']);
+            }
           }
         } catch (error) {
           console.error('Error processing scanned barcode:', error);
@@ -173,5 +190,44 @@ export class QrScannerComponent implements AfterViewInit {
 
   #stopScan(): void {
     this.#barcodeScannerService.stopScan();
+  }
+
+  /**
+   * Extracts box ID from a URL that might be from our app
+   * Supports URLs like: https://yourapp.com/box/123 or https://yourapp.com/#/box/123
+   */
+  #extractBoxIdFromUrl(url: string): string | null {
+    try {
+      const urlObj = new URL(url);
+      
+      // Single regex to handle both path-based and hash-based routing
+      // Matches: /box/boxId or #/box/boxId or /#/box/boxId
+      const boxMatch = (urlObj.pathname + urlObj.hash).match(/(?:#?\/?.*\/)?box\/([^/?#]+)/);
+      
+      return boxMatch ? boxMatch[1] : null;
+    } catch (error) {
+      console.error('Error parsing URL:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Validates if a string could be a valid box ID
+   * Customize this based on your box ID format
+   */
+  #isValidBoxId(boxId: string): boolean {
+    if (!boxId || typeof boxId !== 'string') {
+      return false;
+    }
+    
+    const trimmed = boxId.trim();
+    
+    // Basic validation - adjust these rules based on your box ID format
+    // For example: must be alphanumeric, certain length, etc.
+    return (
+      trimmed.length > 0 &&
+      trimmed.length <= 50 && // reasonable max length
+      /^[a-zA-Z0-9\-_]+$/.test(trimmed) // alphanumeric with dashes and underscores
+    );
   }
 }
