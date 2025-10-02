@@ -3,6 +3,8 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Box, FirestoreService, Item } from '../services/firestore.service';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
+import { ImageService } from '../services/image.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'inv-item-form',
@@ -18,6 +20,7 @@ export class ItemFormComponent implements OnInit {
   readonly #firestoreService: FirestoreService = inject(FirestoreService);
   readonly #route: ActivatedRoute = inject(ActivatedRoute);
   readonly #router: Router = inject(Router);
+  readonly #imageService: ImageService = inject(ImageService);
 
   protected itemForm: FormGroup<{
     name: FormControl<string>;
@@ -61,7 +64,9 @@ export class ItemFormComponent implements OnInit {
     if (this.itemForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
       const item = this.itemForm.value as Item;
+      
       if (this.itemId) {
+        // Updating existing item
         this.#firestoreService.updateItem(this.boxId, { ...item, id: this.itemId }).subscribe({
           next: () => {
             console.debug('Item updated successfully!');
@@ -73,10 +78,38 @@ export class ItemFormComponent implements OnInit {
           }
         });
       } else {
+        // Adding new item - need to handle image moving if temp image exists
         this.#firestoreService.addItem(this.boxId, item).subscribe({
-          next: () => {
-            console.debug('Item added successfully!');
-            this.#router.navigate(['/box', this.boxId]);
+          next: (docRef) => {
+            const finalItemId = docRef.id;
+            const imageUrl = item.imageUrl;
+            
+            // If there's a temporary image, move it to the final location
+            if (imageUrl && imageUrl.includes('temp_')) {
+              this.#imageService.moveItemImage(imageUrl, this.boxId, finalItemId).pipe(
+                switchMap(finalImageUrl => {
+                  // Update the item with the final image URL
+                  return this.#firestoreService.updateItem(this.boxId, { 
+                    ...item, 
+                    id: finalItemId, 
+                    imageUrl: finalImageUrl 
+                  });
+                })
+              ).subscribe({
+                next: () => {
+                  console.debug('Item added with image successfully!');
+                  this.#router.navigate(['/box', this.boxId]);
+                },
+                error: (error: unknown) => {
+                  console.error('Error moving image:', error);
+                  // Item is saved but image might be in temp location
+                  this.#router.navigate(['/box', this.boxId]);
+                }
+              });
+            } else {
+              console.debug('Item added successfully!');
+              this.#router.navigate(['/box', this.boxId]);
+            }
           },
           error: (error: unknown) => {
             console.error('Error adding item:', error);

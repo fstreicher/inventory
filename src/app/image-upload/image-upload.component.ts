@@ -67,18 +67,21 @@ export class ImageUploadComponent {
   }
 
   private uploadImage(file: File): void {
-    if (!this.boxId || !this.itemId) {
-      this.uploadError = 'Cannot upload image: missing box or item ID';
+    if (!this.boxId) {
+      this.uploadError = 'Cannot upload image: missing box ID';
       return;
     }
 
     this.isUploading = true;
     this.uploadError = null;
 
+    // Generate a temporary itemId if we don't have one (for new items)
+    const effectiveItemId = this.itemId || `temp_${Date.now()}`;
+
     // First resize the image to reduce storage usage
     this.#imageService.resizeImage(file)
       .then(resizedFile => {
-        return this.#imageService.uploadItemImage(this.boxId, this.itemId, resizedFile).toPromise();
+        return this.#imageService.uploadItemImage(this.boxId, effectiveItemId, resizedFile).toPromise();
       })
       .then(downloadUrl => {
         if (downloadUrl) {

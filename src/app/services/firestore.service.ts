@@ -17,6 +17,7 @@ import { Observable, from, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { EncryptionService } from './encryption.service';
 import { OfflineService } from './offline.service';
+import { ImageService } from './image.service';
 
 export type Box = {
   id?: string;
@@ -40,6 +41,7 @@ export class FirestoreService {
   readonly #auth: Auth = inject(Auth);
   readonly #offlineService = inject(OfflineService);
   readonly #encryptionService = inject(EncryptionService);
+  readonly #imageService = inject(ImageService);
   readonly #boxesCollection = collection(this.#firestore, 'boxes');
 
   #getCurrentUserId(): string {
@@ -229,8 +231,30 @@ export class FirestoreService {
   public deleteItem(boxId: string, itemId: string): Observable<void> {
     return this.#verifyBoxOwnership(boxId).pipe(
       switchMap(() => {
-        const itemDocRef = doc(this.#firestore, `boxes/${boxId}/items/${itemId}`);
-        return from(deleteDoc(itemDocRef));
+        // First get the item to check if it has an image
+        return this.getItem(boxId, itemId).pipe(
+          switchMap(item => {
+            const itemDocRef = doc(this.#firestore, `boxes/${boxId}/items/${itemId}`);
+            
+            // Delete the item document first
+            return from(deleteDoc(itemDocRef)).pipe(
+              switchMap(() => {
+                // If the item had an image, delete it from storage
+                if (item?.imageUrl) {
+                  return this.#imageService.deleteItemImage(item.imageUrl).pipe(
+                    catchError(error => {
+                      console.warn('Failed to delete item image:', error);
+                      // Don't fail the whole operation if image deletion fails
+                      return from(Promise.resolve());
+                    })
+                  );
+                } else {
+                  return from(Promise.resolve());
+                }
+              })
+            );
+          })
+        );
       })
     );
   }

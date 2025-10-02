@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Storage, ref, uploadBytes, getDownloadURL, deleteObject } from '@angular/fire/storage';
 import { Auth } from '@angular/fire/auth';
 import { Observable, from, throwError } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +43,45 @@ export class ImageService {
     return from(uploadBytes(imageRef, file)).pipe(
       switchMap(() => from(getDownloadURL(imageRef)))
     );
+  }
+
+  /**
+   * Moves an image from a temporary path to a final path (used when saving new items)
+   */
+  public moveItemImage(imageUrl: string, boxId: string, finalItemId: string): Observable<string> {
+    if (!imageUrl || !imageUrl.includes('temp_')) {
+      // Image is already in final location or doesn't exist
+      return from(Promise.resolve(imageUrl));
+    }
+
+    try {
+      // Extract the temp path from the URL
+      const tempRef = ref(this.#storage, imageUrl);
+      
+      // Create new path with final item ID
+      const userId = this.#getCurrentUserId();
+      const fileExtension = imageUrl.split('.').pop()?.split('?')[0] || 'jpg';
+      const fileName = `${Date.now()}.${fileExtension}`;
+      const finalPath = `users/${userId}/boxes/${boxId}/items/${finalItemId}/${fileName}`;
+      const finalRef = ref(this.#storage, finalPath);
+
+      // Download the file and re-upload to final location
+      return from(getDownloadURL(tempRef)).pipe(
+        switchMap(url => from(fetch(url))),
+        switchMap(response => from(response.blob())),
+        switchMap(blob => from(uploadBytes(finalRef, blob))),
+        switchMap(() => from(getDownloadURL(finalRef))),
+        switchMap((newUrl: string) => {
+          // Delete the temporary file
+          return from(deleteObject(tempRef)).pipe(
+            map(() => newUrl),
+            catchError(() => from(Promise.resolve(newUrl))) // Don't fail if temp deletion fails
+          );
+        })
+      );
+    } catch (error) {
+      return throwError(() => error);
+    }
   }
 
   /**
