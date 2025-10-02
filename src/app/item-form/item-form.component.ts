@@ -1,8 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
-import { matArrowForward, matHome, matSync } from '@ng-icons/material-icons/baseline';
+import { matArrowForward, matSync } from '@ng-icons/material-icons/baseline';
+import { BreadcrumbComponent, type BreadcrumbItem } from '../breadcrumb/breadcrumb.component';
 import { Box, FirestoreService, Item } from '../services/firestore.service';
 
 @Component({
@@ -10,8 +11,8 @@ import { Box, FirestoreService, Item } from '../services/firestore.service';
   templateUrl: './item-form.component.html',
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     NgIconComponent,
+    BreadcrumbComponent,
   ],
 })
 export class ItemFormComponent implements OnInit {
@@ -29,8 +30,20 @@ export class ItemFormComponent implements OnInit {
   protected boxName: string = '';
   protected isSubmitting: boolean = false;
 
+  protected get breadcrumbItems(): Array<BreadcrumbItem> {
+    return [
+      {
+        label: this.boxName || 'Box',
+        link: ['/box', this.boxId]
+      },
+      {
+        label: this.itemId ? 'Edit Item' : 'Add Item',
+        isCurrentPage: true
+      }
+    ];
+  }
+
   protected readonly ICONS = {
-    home: matHome,
     chevronRight: matArrowForward,
     spinner: matSync
   };

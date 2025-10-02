@@ -5,15 +5,14 @@ import { NgIconComponent } from '@ng-icons/core';
 import {
   matArrowForwardIos,
   matDeleteForever,
-  matDescription,
   matEdit,
-  matHome,
   matInbox,
   matMoveUp,
   matPlus,
   matQrCode
 } from '@ng-icons/material-icons/baseline';
 import { map, Observable, startWith, switchMap } from 'rxjs';
+import { BreadcrumbComponent, type BreadcrumbItem } from '../breadcrumb/breadcrumb.component';
 import { MoveItemDialogComponent } from '../move-item-dialog/move-item-dialog.component';
 import { QrCodeComponent } from '../qr-code/qr-code.component';
 import { Box, FirestoreService, Item } from '../services/firestore.service';
@@ -33,6 +32,7 @@ type ItemListState = {
     QrCodeComponent,
     MoveItemDialogComponent,
     NgIconComponent,
+    BreadcrumbComponent,
   ],
 })
 export class BoxDetailComponent {
@@ -46,7 +46,6 @@ export class BoxDetailComponent {
     delete: matDeleteForever,
     document: matInbox,
     edit: matEdit,
-    home: matHome,
     move: matMoveUp,
     plus: matPlus,
     qrCode: matQrCode,
@@ -57,6 +56,15 @@ export class BoxDetailComponent {
 
   public box$: Observable<Box | undefined> = this.#route.paramMap.pipe(
     switchMap(params => this.#firestoreService.getBox(params.get('id') as string))
+  );
+
+  public breadcrumbItems$: Observable<Array<BreadcrumbItem>> = this.box$.pipe(
+    map(box => [
+      {
+        label: box?.name || 'Box',
+        isCurrentPage: true
+      }
+    ])
   );
 
   public itemState$: Observable<ItemListState> = this.#route.paramMap.pipe(

@@ -1,8 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
-import { matArrowForwardIos, matHome, matSync } from '@ng-icons/material-icons/baseline';
+import { matArrowForwardIos, matSync } from '@ng-icons/material-icons/baseline';
+import { BreadcrumbComponent, type BreadcrumbItem } from '../breadcrumb/breadcrumb.component';
 import { Box, FirestoreService } from '../services/firestore.service';
 
 @Component({
@@ -10,8 +11,8 @@ import { Box, FirestoreService } from '../services/firestore.service';
   templateUrl: './box-form.component.html',
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     NgIconComponent,
+    BreadcrumbComponent,
   ],
 })
 export class BoxFormComponent implements OnInit {
@@ -24,8 +25,16 @@ export class BoxFormComponent implements OnInit {
   protected boxId: string | null = null;
   protected isSubmitting: boolean = false;
 
+  protected get breadcrumbItems(): Array<BreadcrumbItem> {
+    return [
+      {
+        label: this.boxId ? 'Edit Box' : 'Add Box',
+        isCurrentPage: true
+      }
+    ];
+  }
+
   protected readonly ICONS = {
-    home: matHome,
     chevronRight: matArrowForwardIos,
     spinner: matSync
   };

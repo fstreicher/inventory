@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'tailwindcss-safe-area';
 
 @custom-variant dark (&:where(.dark, .dark *));
 

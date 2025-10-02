@@ -1,46 +1,5 @@
 <div class="mb-8">
-  <nav
-    aria-label="Breadcrumb"
-    class="flex mb-4">
-    <ol class="flex items-center space-x-4">
-      <li>
-        <div>
-          <a
-            class="text-gray-400 dark:text-neutral-500 hover:text-gray-500 dark:hover:text-neutral-400 cursor-pointer"
-            routerLink="/boxes">
-            <ng-icon
-              class="translate-0.5"
-              size="1.25rem"
-              [svg]="ICONS.home" />
-            <span class="sr-only">All Boxes</span>
-          </a>
-        </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <ng-icon
-            class="translate-0.5"
-            size="1.125rem"
-            [svg]="ICONS.chevronRight" />
-          <a
-            class="ml-4 text-sm font-medium text-gray-500 dark:text-neutral-400 hover:text-gray-700 dark:hover:text-neutral-300 cursor-pointer"
-            [routerLink]="['/box', boxId]">
-            {{ boxName || 'Box' }}
-          </a>
-        </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <ng-icon
-            class="translate-0.5"
-            size="1.125rem"
-            [svg]="ICONS.chevronRight" />
-          <span
-            class="ml-4 text-sm font-medium text-gray-500 dark:text-neutral-400">{{ itemId ? 'Edit Item' : 'Add Item' }}</span>
-        </div>
-      </li>
-    </ol>
-  </nav>
+  <inv-breadcrumb [items]="breadcrumbItems" />
 
   <div class="md:grid md:grid-cols-3 md:gap-6">
     <div class="md:col-span-1">
