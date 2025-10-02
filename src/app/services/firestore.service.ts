@@ -7,6 +7,7 @@ import {
   collection,
   collectionData,
   deleteDoc,
+  deleteField,
   doc,
   getDoc,
   query,
@@ -100,6 +101,44 @@ export class FirestoreService {
     return encryptedItem;
   }
 
+  async #prepareBoxUpdateData(box: Box): Promise<Record<string, unknown>> {
+    const updateData: Record<string, unknown> = {
+      name: await this.#encryptionService.encryptText(box.name),
+      userId: this.#getCurrentUserId()
+    };
+
+    // Handle description: if it's null, undefined, or empty string, delete the field
+    if (!box.description || box.description.trim() === '') {
+      updateData['description'] = deleteField();
+    } else {
+      updateData['description'] = await this.#encryptionService.encryptText(box.description);
+    }
+
+    return updateData;
+  }
+
+  async #prepareItemUpdateData(item: Item): Promise<Record<string, unknown>> {
+    const updateData: Record<string, unknown> = {
+      name: await this.#encryptionService.encryptText(item.name)
+    };
+
+    // Handle description: if it's null, undefined, or empty string, delete the field
+    if (!item.description || item.description.trim() === '') {
+      updateData['description'] = deleteField();
+    } else {
+      updateData['description'] = await this.#encryptionService.encryptText(item.description);
+    }
+
+    // Handle imageUrl: if it's null, undefined, or empty string, delete the field
+    if (!item.imageUrl || item.imageUrl.trim() === '') {
+      updateData['imageUrl'] = deleteField();
+    } else {
+      updateData['imageUrl'] = item.imageUrl;
+    }
+
+    return updateData;
+  }
+
   async #decryptItem(encryptedItem: Item): Promise<Item> {
     return {
       ...encryptedItem,
@@ -158,8 +197,8 @@ export class FirestoreService {
       throw new Error('Access denied: Cannot update box that does not belong to current user');
     }
     const boxDocRef = doc(this.#firestore, `boxes/${box.id}`);
-    return from(this.#encryptBox(box)).pipe(
-      switchMap(encryptedBox => from(updateDoc(boxDocRef, encryptedBox)))
+    return from(this.#prepareBoxUpdateData(box)).pipe(
+      switchMap(updateData => from(updateDoc(boxDocRef, updateData)))
     );
   }
 
@@ -236,8 +275,8 @@ export class FirestoreService {
     return this.#verifyBoxOwnership(boxId).pipe(
       switchMap(() => {
         const itemDocRef = doc(this.#firestore, `boxes/${boxId}/items/${item.id}`);
-        return from(this.#encryptItem(item)).pipe(
-          switchMap(encryptedItem => from(updateDoc(itemDocRef, encryptedItem)))
+        return from(this.#prepareItemUpdateData(item)).pipe(
+          switchMap(updateData => from(updateDoc(itemDocRef, updateData)))
         );
       })
     );

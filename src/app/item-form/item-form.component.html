@@ -1,14 +1,14 @@
 <div class="mb-8">
-  <inv-breadcrumb [items]="breadcrumbItems" />
+  <inv-breadcrumb [items]="breadcrumbItems()" />
 
   <div class="md:grid md:grid-cols-3 md:gap-6">
     <div class="md:col-span-1">
       <div class="px-4 sm:px-0">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-          {{ itemId ? 'Edit Item' : 'Add New Item' }}
+          {{ itemId() ? 'Edit Item' : 'Add New Item' }}
         </h1>
         <p class="mt-2 text-sm text-gray-600 dark:text-neutral-400">
-          {{ itemId ? 'Update the details of this item.' : 'Add a new item to your storage box.' }}
+          {{ itemId() ? 'Update the details of this item.' : 'Add a new item to your storage box.' }}
         </p>
       </div>
     </div>
@@ -57,12 +57,11 @@
 
             <div>
               <inv-image-upload
+                [boxId]="boxId()"
                 [imageUrl]="currentImageUrl"
-                [boxId]="boxId"
-                [itemId]="itemId || 'new'"
-                (imageUploaded)="onImageUploaded($event)"
-                (imageRemoved)="onImageRemoved()">
-              </inv-image-upload>
+                [itemId]="itemId() || 'new'"
+                (imageRemoved)="onImageRemoved()"
+                (imageUploaded)="onImageUploaded($event)" />
             </div>
           </div>
           <div class="px-4 py-3 bg-gray-50 dark:bg-neutral-700 text-right sm:px-6 rounded-b-lg">
@@ -76,15 +75,15 @@
               <button
                 class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-400 dark:disabled:bg-neutral-600 disabled:cursor-not-allowed cursor-pointer"
                 type="submit"
-                [disabled]="!itemForm.valid">
-                @if (isSubmitting) {
+                [disabled]="!isFormValid()">
+                @if (isSubmitting()) {
                   <ng-icon
                     class="translate-0.5"
                     size="1.125rem"
-                    [class.animate-spin]="isSubmitting"
+                    [class.animate-spin]="isSubmitting()"
                     [svg]="ICONS.spinner" />
                 }
-                {{ isSubmitting ? 'Saving...' : (itemId ? 'Update Item' : 'Add Item') }}
+                {{ isSubmitting() ? 'Saving...' : (itemId() ? 'Update Item' : 'Add Item') }}
               </button>
             </div>
           </div>

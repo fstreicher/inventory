@@ -1,100 +1,141 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ImageService } from '../services/image.service';
+import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { NgIconComponent } from '@ng-icons/core';
+import {
+  matCameraAlt,
+  matClose,
+  matImage,
+  matPhotoCamera,
+  matSync,
+  matWarning
+} from '@ng-icons/material-icons/baseline';
 import { finalize } from 'rxjs/operators';
+import { ImageService } from '../services/image.service';
 
 @Component({
   selector: 'inv-image-upload',
   templateUrl: './image-upload.component.html',
-  imports: [CommonModule],
+  imports: [CommonModule, NgIconComponent],
 })
 export class ImageUploadComponent {
-  @Input() imageUrl: string | null = null;
-  @Input() boxId: string = '';
-  @Input() itemId: string = '';
-  @Output() imageUploaded = new EventEmitter<string>();
-  @Output() imageRemoved = new EventEmitter<void>();
-
   readonly #imageService = inject(ImageService);
 
-  protected isUploading = false;
-  protected uploadError: string | null = null;
+  protected readonly ICONS = {
+    close: matClose,
+    spinner: matSync,
+    camera: matCameraAlt,
+    image: matImage,
+    warning: matWarning,
+    photoCamera: matPhotoCamera
+  };
+
+  protected isUploading = signal(false);
+  protected uploadError = signal<string | null>(null);
+  protected currentImageUrl = signal<string | null>(null);
+
+  public imageUrl = input<string | null>(null);
+  public boxId = input<string | null>(null);
+  public itemId = input<string | null>(null);
+  public imageUploaded = output<string>();
+  public imageRemoved = output<void>();
+
+  constructor() {
+    // Sync input signal with internal signal
+    effect(() => {
+      this.currentImageUrl.set(this.imageUrl());
+    });
+  }
+
+  // Getter for template to use the current image URL
+  protected get displayImageUrl(): string | null {
+    return this.currentImageUrl();
+  }
+
 
   protected onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      this.uploadImage(input.files[0]);
+    const inputFile = event.target as HTMLInputElement;
+    if (inputFile.files?.[0]) {
+      this.uploadImage(inputFile.files[0]);
     }
   }
 
   protected onCameraClick(): void {
     // Open camera (will fall back to file picker on desktop)
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.capture = 'environment'; // Use rear camera on mobile
-    input.addEventListener('change', (e) => this.onFileSelected(e));
-    input.click();
+    const inputFile = document.createElement('input');
+    inputFile.type = 'file';
+    inputFile.accept = 'image/*';
+    inputFile.capture = 'environment'; // Use rear camera on mobile
+    inputFile.addEventListener('change', (e) => this.onFileSelected(e));
+    inputFile.click();
   }
 
   protected onGalleryClick(): void {
     // Open gallery/file picker
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.addEventListener('change', (e) => this.onFileSelected(e));
-    input.click();
+    const inputFile = document.createElement('input');
+    inputFile.type = 'file';
+    inputFile.accept = 'image/*';
+    inputFile.addEventListener('change', (e) => this.onFileSelected(e));
+    inputFile.click();
   }
 
   protected onRemoveImage(): void {
-    if (this.imageUrl) {
-      this.isUploading = true;
-      this.uploadError = null;
-      
-      this.#imageService.deleteItemImage(this.imageUrl)
-        .pipe(finalize(() => this.isUploading = false))
+    if (this.currentImageUrl()) {
+      this.isUploading.set(true);
+      this.uploadError.set(null);
+
+      this.#imageService.deleteItemImage(this.currentImageUrl()!)
+        .pipe(finalize(() => this.isUploading.set(false)))
         .subscribe({
           next: () => {
-            this.imageUrl = null;
+            this.currentImageUrl.set(null);
             this.imageRemoved.emit();
           },
           error: (error) => {
             console.error('Error removing image:', error);
-            this.uploadError = 'Failed to remove image. Please try again.';
+            this.uploadError.set('Failed to remove image. Please try again.');
           }
         });
     }
   }
 
   private uploadImage(file: File): void {
-    if (!this.boxId) {
-      this.uploadError = 'Cannot upload image: missing box ID';
+    const currentBoxId = this.boxId();
+    if (!currentBoxId) {
+      this.uploadError.set('Cannot upload image: missing box ID');
       return;
     }
 
-    this.isUploading = true;
-    this.uploadError = null;
+    this.isUploading.set(true);
+    this.uploadError.set(null);
 
-    // Generate a temporary itemId if we don't have one (for new items)
-    const effectiveItemId = this.itemId || `temp_${Date.now()}`;
+    // Store reference to old image URL for cleanup
+    const oldImageUrl = this.currentImageUrl();
 
     // First resize the image to reduce storage usage
     this.#imageService.resizeImage(file)
       .then(resizedFile => {
-        return this.#imageService.uploadItemImage(this.boxId, effectiveItemId, resizedFile).toPromise();
+        return this.#imageService.uploadItemImage(currentBoxId, resizedFile).toPromise();
       })
       .then(downloadUrl => {
         if (downloadUrl) {
-          this.imageUrl = downloadUrl;
+          this.currentImageUrl.set(downloadUrl);
           this.imageUploaded.emit(downloadUrl);
+          
+          // Clean up old image if it exists and is different from the new one
+          if (oldImageUrl && oldImageUrl !== downloadUrl) {
+            this.#imageService.deleteItemImage(oldImageUrl).subscribe({
+              next: () => console.debug('Old image cleaned up successfully'),
+              error: (error) => console.warn('Failed to clean up old image:', error)
+            });
+          }
         }
       })
       .catch(error => {
         console.error('Error uploading image:', error);
-        this.uploadError = 'Failed to upload image. Please try again.';
+        this.uploadError.set('Failed to upload image. Please try again.');
       })
       .finally(() => {
-        this.isUploading = false;
+        this.isUploading.set(false);
       });
   }
 }

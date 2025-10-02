@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Storage, ref, uploadBytes, getDownloadURL, deleteObject } from '@angular/fire/storage';
 import { Auth } from '@angular/fire/auth';
+import { Storage, deleteObject, getDownloadURL, ref, uploadBytes } from '@angular/fire/storage';
 import { Observable, from, throwError } from 'rxjs';
-import { switchMap, map, catchError } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -20,9 +20,9 @@ export class ImageService {
   }
 
   /**
-   * Uploads an image to Firebase Storage and returns the download URL
+   * Uploads an image to Firebase Storage using a GUID and returns the download URL
    */
-  public uploadItemImage(boxId: string, itemId: string, file: File): Observable<string> {
+  public uploadItemImage(boxId: string, file: File): Observable<string> {
     if (!file) {
       return throwError(() => new Error('No file provided'));
     }
@@ -32,12 +32,13 @@ export class ImageService {
       return throwError(() => new Error('File must be an image'));
     }
 
-    // Create a unique path for the image
+    // Create a unique GUID-based path for the image
     const userId = this.#getCurrentUserId();
+    const imageId = crypto.randomUUID();
     const fileExtension = file.name.split('.').pop() || 'jpg';
-    const fileName = `${Date.now()}.${fileExtension}`;
-    const imagePath = `users/${userId}/boxes/${boxId}/items/${itemId}/${fileName}`;
-    
+    const fileName = `${imageId}.${fileExtension}`;
+    const imagePath = `users/${userId}/boxes/${boxId}/${fileName}`;
+
     const imageRef = ref(this.#storage, imagePath);
 
     return from(uploadBytes(imageRef, file)).pipe(
@@ -46,46 +47,7 @@ export class ImageService {
   }
 
   /**
-   * Moves an image from a temporary path to a final path (used when saving new items)
-   */
-  public moveItemImage(imageUrl: string, boxId: string, finalItemId: string): Observable<string> {
-    if (!imageUrl || !imageUrl.includes('temp_')) {
-      // Image is already in final location or doesn't exist
-      return from(Promise.resolve(imageUrl));
-    }
-
-    try {
-      // Extract the temp path from the URL
-      const tempRef = ref(this.#storage, imageUrl);
-      
-      // Create new path with final item ID
-      const userId = this.#getCurrentUserId();
-      const fileExtension = imageUrl.split('.').pop()?.split('?')[0] || 'jpg';
-      const fileName = `${Date.now()}.${fileExtension}`;
-      const finalPath = `users/${userId}/boxes/${boxId}/items/${finalItemId}/${fileName}`;
-      const finalRef = ref(this.#storage, finalPath);
-
-      // Download the file and re-upload to final location
-      return from(getDownloadURL(tempRef)).pipe(
-        switchMap(url => from(fetch(url))),
-        switchMap(response => from(response.blob())),
-        switchMap(blob => from(uploadBytes(finalRef, blob))),
-        switchMap(() => from(getDownloadURL(finalRef))),
-        switchMap((newUrl: string) => {
-          // Delete the temporary file
-          return from(deleteObject(tempRef)).pipe(
-            map(() => newUrl),
-            catchError(() => from(Promise.resolve(newUrl))) // Don't fail if temp deletion fails
-          );
-        })
-      );
-    } catch (error) {
-      return throwError(() => error);
-    }
-  }
-
-  /**
-   * Deletes an image from Firebase Storage
+   * Deletes an image from Firebase Storage using the image URL
    */
   public deleteItemImage(imageUrl: string): Observable<void> {
     if (!imageUrl) {
@@ -93,7 +55,16 @@ export class ImageService {
     }
 
     try {
-      const imageRef = ref(this.#storage, imageUrl);
+      // Extract storage path from the download URL
+      // Firebase Storage URLs have format: https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{path}?{params}
+      const urlParts = imageUrl.split('/o/')[1]?.split('?')[0];
+      if (!urlParts) {
+        return throwError(() => new Error('Invalid image URL format'));
+      }
+
+      // Decode the path (Firebase encodes paths in URLs)
+      const imagePath = decodeURIComponent(urlParts);
+      const imageRef = ref(this.#storage, imagePath);
       return from(deleteObject(imageRef));
     } catch (error) {
       return throwError(() => error);
@@ -109,10 +80,10 @@ export class ImageService {
       const ctx = canvas.getContext('2d');
       const img = new Image();
 
-      img.onload = () => {
+      img.onload = (): void => {
         // Calculate new dimensions
         let { width, height } = img;
-        
+
         if (width > height) {
           if (width > maxWidth) {
             height = (height * maxWidth) / width;
@@ -130,7 +101,7 @@ export class ImageService {
 
         // Draw and compress the image
         ctx?.drawImage(img, 0, 0, width, height);
-        
+
         canvas.toBlob(
           (blob) => {
             if (blob) {
@@ -147,7 +118,7 @@ export class ImageService {
         );
       };
 
-      img.onerror = () => reject(new Error('Failed to load image'));
+      img.onerror = (): void => reject(new Error('Failed to load image'));
       img.src = URL.createObjectURL(file);
     });
   }
