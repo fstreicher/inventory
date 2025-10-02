@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map, Observable, startWith, switchMap } from 'rxjs';
-import { Box, FirestoreService, Item } from '../firestore.service';
+import { Box, FirestoreService, Item } from '../services/firestore.service';
 
 interface ItemListState {
   loading: boolean;
