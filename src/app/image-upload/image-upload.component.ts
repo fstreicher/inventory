@@ -9,13 +9,17 @@ import {
   matSync,
   matWarning
 } from '@ng-icons/material-icons/baseline';
+import { toast } from 'ngx-sonner';
 import { finalize } from 'rxjs/operators';
 import { ImageService } from '../services/image.service';
 
 @Component({
   selector: 'inv-image-upload',
   templateUrl: './image-upload.component.html',
-  imports: [CommonModule, NgIconComponent],
+  imports: [
+    CommonModule,
+    NgIconComponent,
+  ],
 })
 export class ImageUploadComponent {
   readonly #imageService = inject(ImageService);
@@ -89,10 +93,12 @@ export class ImageUploadComponent {
           next: () => {
             this.currentImageUrl.set(null);
             this.imageRemoved.emit();
+            toast.success('Image removed successfully');
           },
           error: (error) => {
             console.error('Error removing image:', error);
             this.uploadError.set('Failed to remove image. Please try again.');
+            toast.error('Failed to remove image');
           }
         });
     }
@@ -102,6 +108,7 @@ export class ImageUploadComponent {
     const currentBoxId = this.boxId();
     if (!currentBoxId) {
       this.uploadError.set('Cannot upload image: missing box ID');
+      toast.error('Cannot upload image: missing box ID');
       return;
     }
 
@@ -120,7 +127,8 @@ export class ImageUploadComponent {
         if (downloadUrl) {
           this.currentImageUrl.set(downloadUrl);
           this.imageUploaded.emit(downloadUrl);
-          
+          toast.success('Image uploaded successfully');
+
           // Clean up old image if it exists and is different from the new one
           if (oldImageUrl && oldImageUrl !== downloadUrl) {
             this.#imageService.deleteItemImage(oldImageUrl).subscribe({
@@ -133,6 +141,7 @@ export class ImageUploadComponent {
       .catch(error => {
         console.error('Error uploading image:', error);
         this.uploadError.set('Failed to upload image. Please try again.');
+        toast.error('Failed to upload image');
       })
       .finally(() => {
         this.isUploading.set(false);

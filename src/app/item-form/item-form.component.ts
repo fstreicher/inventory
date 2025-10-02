@@ -1,11 +1,12 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
 import { matArrowForward, matSync } from '@ng-icons/material-icons/baseline';
+import { toast } from 'ngx-sonner';
 import { BreadcrumbComponent, type BreadcrumbItem } from '../breadcrumb/breadcrumb.component';
-import { Box, FirestoreService, Item } from '../services/firestore.service';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
+import { Box, FirestoreService, Item } from '../services/firestore.service';
 
 @Component({
   selector: 'inv-item-form',
@@ -120,11 +121,12 @@ export class ItemFormComponent implements OnInit {
         // Updating existing item
         this.#firestoreService.updateItem(this.boxId(), { ...item, id: this.itemId()! }).subscribe({
           next: () => {
-            console.debug('Item updated successfully!');
+            toast.success('Item updated successfully');
             this.#router.navigate(['/box', this.boxId()]);
           },
           error: (error: unknown) => {
             console.error('Error updating item:', error);
+            toast.error('Failed to update item');
             this.isSubmitting.set(false);
           }
         });
@@ -132,11 +134,12 @@ export class ItemFormComponent implements OnInit {
         // Adding new item - image is already uploaded with GUID, no need to move
         this.#firestoreService.addItem(this.boxId(), item).subscribe({
           next: () => {
-            console.debug('Item added successfully!');
+            toast.success('Item created successfully');
             this.#router.navigate(['/box', this.boxId()]);
           },
           error: (error: unknown) => {
             console.error('Error adding item:', error);
+            toast.error('Failed to create item');
             this.isSubmitting.set(false);
           }
         });

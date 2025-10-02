@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavigationComponent } from './navigation/navigation.component';
+import { NgxSonnerToaster } from 'ngx-sonner';
 
 @Component({
   selector: 'inv-root',
@@ -8,6 +9,7 @@ import { NavigationComponent } from './navigation/navigation.component';
   imports: [
     RouterOutlet,
     NavigationComponent,
+    NgxSonnerToaster,
   ],
 })
 export class AppComponent {
