@@ -18,9 +18,9 @@
           <div class="rounded-md bg-red-50 dark:bg-red-900 p-4 transition-colors duration-200">
             <div class="flex">
               <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-red-400 dark:text-red-300 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20">
-                  <use href="#icon-error-circle" />
-                </svg>
+                <div class="h-5 w-5 text-red-400 dark:text-red-300 transition-colors duration-200">
+                  <ng-icon size="20" [svg]="ICONS.error" />
+                </div>
               </div>
               <div class="ml-3">
                 <h3 class="text-sm font-medium text-red-800 dark:text-red-200 transition-colors duration-200">
@@ -41,10 +41,9 @@
             [disabled]="isLoading"
             (click)="signInWithGoogle()">
             @if (isLoading) {
-              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500 dark:text-neutral-400 transition-colors duration-200" fill="none"
-                viewBox="0 0 24 24">
-                <use href="#icon-spinner" />
-              </svg>
+              <div class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500 dark:text-neutral-400 transition-colors duration-200">
+                <ng-icon size="20" [svg]="ICONS.sync" />
+              </div>
               Signing in...
             } @else {
               <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24">

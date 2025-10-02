@@ -59,11 +59,17 @@ export class FirestoreService {
   }
 
   async #encryptBox(box: Box): Promise<Box> {
-    return {
+    const encryptedBox: Box = {
       name: await this.#encryptionService.encryptText(box.name),
-      description: await this.#encryptionService.encryptText(box.description),
       userId: this.#getCurrentUserId()
     };
+    
+    // Only add description if it exists and is not empty
+    if (box.description && box.description.trim() !== '') {
+      encryptedBox.description = await this.#encryptionService.encryptText(box.description);
+    }
+    
+    return encryptedBox;
   }
 
   async #decryptBox(encryptedBox: Box): Promise<Box> {
@@ -75,10 +81,16 @@ export class FirestoreService {
   }
 
   async #encryptItem(item: Item): Promise<Item> {
-    return {
-      name: await this.#encryptionService.encryptText(item.name),
-      description: await this.#encryptionService.encryptText(item.description)
+    const encryptedItem: Item = {
+      name: await this.#encryptionService.encryptText(item.name)
     };
+    
+    // Only add description if it exists and is not empty
+    if (item.description && item.description.trim() !== '') {
+      encryptedItem.description = await this.#encryptionService.encryptText(item.description);
+    }
+    
+    return encryptedItem;
   }
 
   async #decryptItem(encryptedItem: Item): Promise<Item> {
@@ -228,6 +240,34 @@ export class FirestoreService {
       switchMap(() => {
         const itemDocRef = doc(this.#firestore, `boxes/${boxId}/items/${itemId}`);
         return from(deleteDoc(itemDocRef));
+      })
+    );
+  }
+
+  public moveItem(sourceBoxId: string, targetBoxId: string, itemId: string): Observable<void> {
+    // Verify ownership of both boxes and get the item to move
+    return this.#verifyBoxOwnership(sourceBoxId).pipe(
+      switchMap(() => this.#verifyBoxOwnership(targetBoxId)),
+      switchMap(() => this.getItem(sourceBoxId, itemId)),
+      switchMap(item => {
+        if (!item) {
+          return throwError(() => new Error('Item not found'));
+        }
+
+        // Create a copy of the item without the ID for the new location
+        const itemToMove: Item = {
+          name: item.name
+        };
+        
+        // Only include description if it exists and is not empty
+        if (item.description && item.description.trim() !== '') {
+          itemToMove.description = item.description;
+        }
+
+        // Add item to target box and then delete from source box
+        return this.addItem(targetBoxId, itemToMove).pipe(
+          switchMap(() => this.deleteItem(sourceBoxId, itemId))
+        );
       })
     );
   }

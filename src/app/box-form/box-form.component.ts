@@ -1,6 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { NgIconComponent } from '@ng-icons/core';
+import { matArrowForwardIos, matHome, matSync } from '@ng-icons/material-icons/baseline';
 import { Box, FirestoreService } from '../services/firestore.service';
 
 @Component({
@@ -9,6 +11,7 @@ import { Box, FirestoreService } from '../services/firestore.service';
   imports: [
     ReactiveFormsModule,
     RouterLink,
+    NgIconComponent,
   ],
 })
 export class BoxFormComponent implements OnInit {
@@ -20,6 +23,12 @@ export class BoxFormComponent implements OnInit {
   protected boxForm: FormGroup;
   protected boxId: string | null = null;
   protected isSubmitting: boolean = false;
+
+  protected readonly ICONS = {
+    home: matHome,
+    chevronRight: matArrowForwardIos,
+    spinner: matSync
+  };
 
   constructor() {
     this.boxForm = this.#fb.group({

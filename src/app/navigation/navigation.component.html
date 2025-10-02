@@ -28,37 +28,35 @@
           <div class="flex items-center space-x-2">
             @if (isOnline$ | async) {
               <div class="flex items-center space-x-1 text-green-600 dark:text-green-400">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <use href="#icon-wifi" />
-                </svg>
+                <div class="h-4 w-4">
+                  <ng-icon size="16" [svg]="ICONS.wifi" />
+                </div>
                 <span class="text-xs font-medium">Online</span>
               </div>
             } @else {
               <div class="flex items-center space-x-1 text-amber-600 dark:text-amber-400">
-                <svg class="h-4 w-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <use href="#icon-wifi-off" />
-                </svg>
+                <div class="h-4 w-4 animate-pulse">
+                  <ng-icon size="16" [svg]="ICONS.wifiOff" />
+                </div>
                 <span class="text-xs font-medium">Offline</span>
               </div>
             }
           </div>
 
-          <!-- Theme Toggle -->
+          <!-- QR Scanner -->
           <a
             class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
             routerLink="/scan"
             title="Scan QR Code">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <use href="#icon-qr-code-scan" />
-            </svg>
+            <div class="h-5 w-5">
+              <ng-icon size="20" [svg]="ICONS.qrCodeScanner" />
+            </div>
           </a>
           <button
             class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
             [title]="'Theme: ' + getThemeLabel()"
             (click)="toggleTheme()">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <use [attr.href]="'#' + getThemeIcon()" />
-            </svg>
+            <ng-icon [svg]="getThemeIcon()" />
           </button>
 
           <span class="text-sm text-gray-600 dark:text-neutral-300 transition-colors duration-200">
@@ -67,9 +65,9 @@
           <button
             class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border border-gray-300 dark:border-neutral-600 hover:border-gray-400 dark:hover:border-neutral-500 flex items-center space-x-2"
             (click)="signOut()">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <use href="#icon-logout" />
-            </svg>
+            <div class="h-4 w-4">
+              <ng-icon size="16" [svg]="ICONS.logout" />
+            </div>
             <span>Sign Out</span>
           </button>
         </div>
@@ -81,34 +79,32 @@
           <!-- Mobile Offline Status -->
           @if (isOnline$ | async) {
             <div class="flex items-center space-x-1 text-green-600 dark:text-green-400" title="Online">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <use href="#icon-wifi" />
-              </svg>
+              <div class="h-4 w-4">
+                <ng-icon size="16" [svg]="ICONS.wifi" />
+              </div>
             </div>
           } @else {
             <div class="flex items-center space-x-1 text-amber-600 dark:text-amber-400" title="Offline">
-              <svg class="h-4 w-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <use href="#icon-wifi-off" />
-              </svg>
+              <div class="h-4 w-4 animate-pulse">
+                <ng-icon size="16" [svg]="ICONS.wifiOff" />
+              </div>
             </div>
           }
 
-          <!-- Mobile Theme Toggle -->
+          <!-- Mobile QR Scanner -->
           <a
             class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
             routerLink="/scan"
             title="Scan QR Code">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <use href="#icon-qr-code-scan" />
-            </svg>
+            <div class="h-5 w-5">
+              <ng-icon size="20" [svg]="ICONS.qrCodeScanner" />
+            </div>
           </a>
           <button
             class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
             [title]="'Theme: ' + getThemeLabel()"
             (click)="toggleTheme()">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <use [attr.href]="'#' + getThemeIcon()" />
-            </svg>
+            <ng-icon [svg]="getThemeIcon()" />
           </button>
 
           <button
@@ -119,14 +115,14 @@
             <span class="sr-only">Open main menu</span>
             @if (!isMobileMenuOpen) {
               <!-- Hamburger icon -->
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <use href="#icon-menu" />
-              </svg>
+              <div class="h-6 w-6">
+                <ng-icon size="24" [svg]="ICONS.menu" />
+              </div>
             } @else {
               <!-- Close icon -->
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <use href="#icon-close" />
-              </svg>
+              <div class="h-6 w-6">
+                <ng-icon size="24" [svg]="ICONS.close" />
+              </div>
             }
           </button>
         </div>
@@ -156,9 +152,9 @@
                 class="w-full text-left text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 border border-gray-300 dark:border-neutral-600"
                 (click)="signOut()">
                 <div class="flex items-center space-x-2">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <use href="#icon-logout" />
-                  </svg>
+                  <div class="h-4 w-4">
+                    <ng-icon size="16" [svg]="ICONS.logout" />
+                  </div>
                   <span>Sign Out</span>
                 </div>
               </button>

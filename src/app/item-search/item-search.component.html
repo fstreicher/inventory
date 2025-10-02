@@ -15,10 +15,9 @@
   <form [formGroup]="searchForm">
     <div class="relative">
       <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <svg class="h-5 w-5 text-gray-400 dark:text-neutral-500 transition-colors duration-200" fill="none" stroke="currentColor"
-          viewBox="0 0 24 24">
-          <use href="#icon-search" />
-        </svg>
+        <div class="h-5 w-5 text-gray-400 dark:text-neutral-500 transition-colors duration-200">
+          <ng-icon size="20" [svg]="ICONS.search" />
+        </div>
       </div>
       <input
         class="block w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 focus:ring-opacity-50 focus:border-primary-500 sm:text-sm placeholder-gray-400 dark:placeholder-neutral-400 transition-all duration-200"
@@ -28,12 +27,12 @@
       @if (searchForm.get('query')?.value) {
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
           <button
-            class="text-gray-400 dark:text-neutral-500 hover:text-gray-600 dark:hover:text-neutral-400 focus:outline-none transition-colors duration-200"
+            class="text-gray-400 dark:text-neutral-500 hover:text-gray-600 dark:hover:text-neutral-400 focus:outline-none transition-colors duration-200 cursor-pointer"
             type="button"
             (click)="clearSearch()">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <use href="#icon-close" />
-            </svg>
+            <div class="h-5 w-5">
+              <ng-icon size="20" [svg]="ICONS.close" />
+            </div>
           </button>
         </div>
       }
@@ -49,9 +48,9 @@
   <div
     class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg p-8 border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
     <div class="flex items-center justify-center">
-      <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24">
-        <use href="#icon-spinner" />
-      </svg>
+      <div class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary-600 dark:text-primary-400">
+        <ng-icon size="20" [svg]="ICONS.sync" />
+      </div>
       <span class="text-gray-600 dark:text-neutral-300 transition-colors duration-200">Searching...</span>
     </div>
   </div>
@@ -63,10 +62,9 @@
     <div
       class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg p-8 border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
       <div class="text-center">
-        <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-neutral-500 transition-colors duration-200" fill="none" stroke="currentColor"
-          viewBox="0 0 24 24">
-          <use href="#icon-search" />
-        </svg>
+        <div class="mx-auto h-12 w-12 text-gray-400 dark:text-neutral-500 transition-colors duration-200">
+          <ng-icon size="48" [svg]="ICONS.search" />
+        </div>
         <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white transition-colors duration-200">No items found</h3>
         <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400 transition-colors duration-200">
           No items match your search criteria "{{ searchForm.get('query')?.value }}"
@@ -94,9 +92,9 @@
                       <div class="flex-shrink-0">
                         <div
                           class="h-8 w-8 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center transition-colors duration-200">
-                          <svg class="h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <use href="#icon-document" />
-                          </svg>
+                          <div class="h-5 w-5 text-primary-600 dark:text-primary-400">
+                            <ng-icon size="20" [svg]="ICONS.description" />
+                          </div>
                         </div>
                       </div>
                       <div class="flex-1 min-w-0">
@@ -117,7 +115,7 @@
                       </svg>
                       <span>Found in box:</span>
                       <a
-                        class="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-medium transition-colors duration-200"
+                        class="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-medium transition-colors duration-200 cursor-pointer"
                         [routerLink]="['/box', result.box.id]">
                         {{ result.box.name }}
                       </a>
@@ -126,20 +124,25 @@
 
                   <div class="ml-4 flex-shrink-0 flex space-x-2">
                     <a
-                      class="text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200"
+                      class="text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200 cursor-pointer"
                       title="Edit item"
                       [routerLink]="['/box', result.box.id, 'edit-item', result.item.id]">
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <use href="#icon-edit" />
-                      </svg>
+                      <ng-icon size="1.25rem" [svg]="ICONS.edit" />
                     </a>
+                    <button
+                      class="text-gray-400 dark:text-neutral-500 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
+                      title="Move item to another box"
+                      (click)="openMoveItemDialog(result)">
+                      <ng-icon
+                        size="1.25rem"
+                        [svg]="ICONS.move" />
+
+                    </button>
                     <a
-                      class="text-gray-400 dark:text-neutral-500 hover:text-green-500 dark:hover:text-green-400 transition-colors duration-200"
+                      class="text-gray-400 dark:text-neutral-500 hover:text-green-500 dark:hover:text-green-400 transition-colors duration-200 cursor-pointer"
                       title="View box"
                       [routerLink]="['/box', result.box.id]">
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <use href="#icon-eye" />
-                      </svg>
+                      <ng-icon size="1.25rem" [svg]="ICONS.view" />
                     </a>
                   </div>
                 </div>
@@ -150,3 +153,11 @@
       </div>
       }
       }
+
+      <inv-move-item-dialog
+        [availableBoxes$]="availableBoxes$"
+        [isMoving]="isMoving"
+        [itemName]="selectedItemData?.item?.name"
+        [sourceBoxName]="selectedItemData?.box?.name"
+        (dialogClosed)="onMoveItemDialogClosed()"
+        (moveToBox)="onMoveItemToBox($event)" />
