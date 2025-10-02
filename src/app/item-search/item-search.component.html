@@ -89,16 +89,27 @@
               <div
                 class="border border-gray-200 dark:border-neutral-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors duration-200">
                 <div class="flex items-start justify-between">
+                  @if (result.item.imageUrl) {
+                    <div class="flex-shrink-0 mr-4">
+                      <img 
+                        [src]="result.item.imageUrl" 
+                        [alt]="result.item.name"
+                        class="w-16 h-16 object-cover rounded-lg">
+                    </div>
+                  }
+                  
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center space-x-3 mb-2">
-                      <div class="flex-shrink-0">
-                        <div
-                          class="h-8 w-8 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center transition-colors duration-200">
-                          <svg class="h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <use href="#icon-document" />
-                          </svg>
+                      @if (!result.item.imageUrl) {
+                        <div class="flex-shrink-0">
+                          <div
+                            class="h-8 w-8 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center transition-colors duration-200">
+                            <svg class="h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <use href="#icon-document" />
+                            </svg>
+                          </div>
                         </div>
-                      </div>
+                      }
                       <div class="flex-1 min-w-0">
                         <h4
                           class="text-sm font-medium text-gray-900 dark:text-white transition-colors duration-200"

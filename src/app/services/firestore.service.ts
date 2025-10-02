@@ -29,6 +29,7 @@ export type Item = {
   id?: string;
   name: string;
   description?: string;
+  imageUrl?: string;
 }
 
 @Injectable({
@@ -77,7 +78,8 @@ export class FirestoreService {
   async #encryptItem(item: Item): Promise<Item> {
     return {
       name: await this.#encryptionService.encryptText(item.name),
-      description: await this.#encryptionService.encryptText(item.description)
+      description: await this.#encryptionService.encryptText(item.description),
+      imageUrl: item.imageUrl // Image URLs don't need encryption as they're already secure Firebase URLs
     };
   }
 
@@ -85,7 +87,8 @@ export class FirestoreService {
     return {
       ...encryptedItem,
       name: await this.#encryptionService.decryptText(encryptedItem.name),
-      description: await this.#encryptionService.decryptText(encryptedItem.description)
+      description: await this.#encryptionService.decryptText(encryptedItem.description),
+      imageUrl: encryptedItem.imageUrl // Image URLs don't need decryption
     };
   }
 

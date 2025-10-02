@@ -129,6 +129,16 @@
             @for (item of state.items; track item.id) {
               <div
                 class="relative rounded-lg border border-gray-200 dark:border-neutral-600 bg-gray-50 dark:bg-neutral-700 px-6 py-4 hover:bg-white dark:hover:bg-neutral-600 hover:shadow-sm transition-all duration-200">
+                
+                @if (item.imageUrl) {
+                  <div class="mb-3">
+                    <img 
+                      [src]="item.imageUrl" 
+                      [alt]="item.name"
+                      class="w-full h-32 object-cover rounded-md">
+                  </div>
+                }
+                
                 <div class="flex items-start justify-between">
                   <div class="flex-1 min-w-0">
                     <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate transition-colors duration-200">{{ item.name }}
