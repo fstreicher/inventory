@@ -1,9 +1,9 @@
-<nav class="bg-white dark:bg-neutral-800 shadow-lg border-b border-gray-200 dark:border-neutral-700 transition-colors duration-200">
+<nav class="bg-white dark:bg-neutral-800 shadow-lg border-b border-gray-200 dark:border-neutral-700">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-16">
       <div class="flex items-center">
         <div class="flex-shrink-0">
-          <h1 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white transition-colors duration-200">📦 Inventory Manager
+          <h1 class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">📦 Inventory Manager
           </h1>
         </div>
         <!-- Desktop Navigation -->
@@ -11,7 +11,7 @@
           <div class="hidden md:ml-10 md:flex md:items-baseline md:space-x-4">
             @for (navItem of navItems; track $index) {
               <a
-                class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium"
                 routerLinkActive="bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300"
                 [routerLink]="navItem.path">
                 {{ navItem.label }}
@@ -45,7 +45,7 @@
 
           <!-- QR Scanner -->
           <a
-            class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
+            class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
             routerLink="/scan"
             title="Scan QR Code">
             <div class="h-5 w-5">
@@ -53,17 +53,17 @@
             </div>
           </a>
           <button
-            class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
+            class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
             [title]="'Theme: ' + getThemeLabel()"
             (click)="toggleTheme()">
             <ng-icon [svg]="getThemeIcon()" />
           </button>
 
-          <span class="text-sm text-gray-600 dark:text-neutral-300 transition-colors duration-200">
+          <span class="text-sm text-gray-600 dark:text-neutral-300">
             Welcome, {{ name() }}
           </span>
           <button
-            class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 border border-gray-300 dark:border-neutral-600 hover:border-gray-400 dark:hover:border-neutral-500 flex items-center space-x-2"
+            class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium border border-gray-300 dark:border-neutral-600 hover:border-gray-400 dark:hover:border-neutral-500 flex items-center space-x-2"
             (click)="signOut()">
             <div class="h-4 w-4">
               <ng-icon size="16" [svg]="ICONS.logout" />
@@ -91,20 +91,20 @@
 
           <!-- Mobile QR Scanner -->
           <a
-            class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
+            class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
             routerLink="/scan"
             title="Scan QR Code">
               <ng-icon size="20" [svg]="ICONS.qrCodeScanner" />
           </a>
           <button
-            class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
+            class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
             [title]="'Theme: ' + getThemeLabel()"
             (click)="toggleTheme()">
             <ng-icon [svg]="getThemeIcon()" />
           </button>
 
           <button
-            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 dark:focus:ring-primary-400 transition-colors duration-200"
+            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 dark:focus:ring-primary-400"
             type="button"
             [attr.aria-expanded]="isMobileMenuOpen"
             (click)="toggleMobileMenu()">
@@ -128,10 +128,10 @@
     <!-- Mobile Navigation Menu -->
     @if (isMobileMenuOpen && (user$ | async)) {
       <div class="md:hidden">
-        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200 dark:border-neutral-700 transition-colors duration-200">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200 dark:border-neutral-700">
           @for (navItem of navItems; track $index) {
             <a
-              class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+              class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 block px-3 py-2 rounded-md text-base font-medium"
               routerLinkActive="bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300"
               [routerLink]="navItem.path"
               (click)="closeMobileMenu()">
@@ -139,13 +139,13 @@
             </a>
           }
           <!-- Mobile user info and sign out -->
-          <div class="border-t border-gray-200 dark:border-neutral-700 pt-2 mt-2 transition-colors duration-200">
+          <div class="border-t border-gray-200 dark:border-neutral-700 pt-2 mt-2">
             @if (user$ | async; as user) {
-              <div class="px-3 py-2 text-sm text-gray-600 dark:text-neutral-300 transition-colors duration-200">
+              <div class="px-3 py-2 text-sm text-gray-600 dark:text-neutral-300">
                 Welcome, {{ user.displayName || user.email }}
               </div>
               <button
-                class="w-full text-left text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 border border-gray-300 dark:border-neutral-600"
+                class="w-full text-left text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 block px-3 py-2 rounded-md text-base font-medium border border-gray-300 dark:border-neutral-600"
                 (click)="signOut()">
                 <div class="flex items-center space-x-2">
                   <div class="h-4 w-4">

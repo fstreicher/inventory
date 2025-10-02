@@ -20,17 +20,27 @@
 }
 
 @layer base {
+
+  *,
+  *::before,
+  *::after {
+    transition-property: color, background-color, border-color, outline-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+
   body {
     background-color: white;
     color: var(--color-neutral-900);
-    transition-property: color, background-color, border-color;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
 
     .dark & {
       background-color: var(--color-neutral-900);
       color: var(--color-neutral-100);
     }
+  }
+
+  button {
+    @apply cursor-pointer;
   }
 }
 

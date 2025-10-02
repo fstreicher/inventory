@@ -1,8 +1,8 @@
 <div class="mb-8">
   <div class="sm:flex sm:items-center sm:justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-200">Your Boxes</h1>
-      <p class="mt-2 text-sm text-gray-700 dark:text-neutral-300 transition-colors duration-200">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Your Boxes</h1>
+      <p class="mt-2 text-sm text-gray-700 dark:text-neutral-300">
         Manage your storage boxes and their contents.
         @if (offlineService.isOffline$ | async) {
           <span
@@ -14,7 +14,7 @@
     </div>
     <div class="mt-4 sm:mt-0">
       <a
-        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-200 cursor-pointer"
+        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
         routerLink="/add-box">
         <ng-icon
           class="mr-1"
@@ -32,7 +32,7 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       @for (item of [1,2,3,4]; track item) {
         <div
-          class="relative rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-6 py-5 shadow-sm transition-colors duration-200">
+          class="relative rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-6 py-5 shadow-sm">
           <div class="flex items-center space-x-3 animate-pulse">
             <div class="flex-shrink-0">
               <div class="h-10 w-10 rounded-lg bg-gray-200 dark:bg-neutral-700"></div>
@@ -50,16 +50,16 @@
     </div>
   } @else if (state.boxes.length === 0) {
     <div class="text-center py-12">
-      <div class="mx-auto h-12 w-12 text-gray-400 dark:text-neutral-500 transition-colors duration-200">
+      <div class="mx-auto h-12 w-12 text-gray-400 dark:text-neutral-500">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <use href="#icon-box" />
         </svg>
       </div>
-      <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white transition-colors duration-200">No boxes yet</h3>
-      <p class="mt-2 text-gray-500 dark:text-neutral-400 transition-colors duration-200">Get started by creating your first storage box.</p>
+      <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">No boxes yet</h3>
+      <p class="mt-2 text-gray-500 dark:text-neutral-400">Get started by creating your first storage box.</p>
       <div class="mt-6">
         <a
-          class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-200 cursor-pointer"
+          class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 cursor-pointer"
           routerLink="/add-box">
           Add your first box
         </a>
@@ -69,14 +69,14 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       @for (box of state.boxes; track box.id) {
         <div
-          class="relative rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-6 py-5 shadow-sm hover:shadow-md hover:border-gray-400 dark:hover:border-neutral-500 transition-all duration-200 cursor-pointer group">
+          class="relative rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-6 py-5 shadow-sm hover:shadow-md hover:border-gray-400 dark:hover:border-neutral-500 cursor-pointer group">
           <a
             class="absolute inset-0 rounded-lg z-10"
             [routerLink]="['/box', box.id]"></a>
           <div class="flex items-center space-x-3">
             <div class="flex-shrink-0">
               <div
-                class="h-10 w-10 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center group-hover:bg-primary-200 dark:group-hover:bg-primary-800 transition-colors duration-200">
+                class="h-10 w-10 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center group-hover:bg-primary-200 dark:group-hover:bg-primary-800">
                 <svg class="h-6 w-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <use href="#icon-box" />
                 </svg>
@@ -84,15 +84,15 @@
             </div>
             <div class="flex-1 min-w-0">
               <div class="focus:outline-none">
-                <p class="text-sm font-medium text-gray-900 dark:text-white truncate transition-colors duration-200">{{ box.name }}</p>
-                <p class="text-sm text-gray-500 dark:text-neutral-400 truncate transition-colors duration-200">
+                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ box.name }}</p>
+                <p class="text-sm text-gray-500 dark:text-neutral-400 truncate">
                   {{ box.description || 'No description' }}
                 </p>
               </div>
             </div>
             <div class="flex-shrink-0">
               <div
-                class="flex items-center text-gray-400 dark:text-neutral-500 group-hover:text-gray-600 dark:group-hover:text-neutral-300 transition-colors duration-200">
+                class="flex items-center text-gray-400 dark:text-neutral-500 group-hover:text-gray-600 dark:group-hover:text-neutral-300">
                 <ng-icon
                   size="1.5rem"
                   [svg]="ICONS.chevronRight" />

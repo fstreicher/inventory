@@ -29,7 +29,7 @@
         <div class="space-y-2 mb-4 max-h-64 overflow-y-auto">
           @for (availableBox of boxes; track availableBox.id) {
             <button
-              class="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-neutral-600 hover:bg-gray-50 dark:hover:bg-neutral-700 hover:border-primary-300 dark:hover:border-primary-600 transition-colors duration-200 cursor-pointer"
+              class="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-neutral-600 hover:bg-gray-50 dark:hover:bg-neutral-700 hover:border-primary-300 dark:hover:border-primary-600 cursor-pointer"
               [disabled]="isMoving"
               (click)="onMoveToBox(availableBox.id!)">
               <div class="font-medium text-gray-900 dark:text-white">{{ availableBox.name }}</div>
@@ -44,7 +44,7 @@
     
     <div class="flex justify-end space-x-3">
       <button
-        class="px-4 py-2 border border-gray-300 dark:border-neutral-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-600 transition-colors duration-200 cursor-pointer"
+        class="px-4 py-2 border border-gray-300 dark:border-neutral-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-600 cursor-pointer"
         [disabled]="isMoving"
         (click)="close()">
         Cancel

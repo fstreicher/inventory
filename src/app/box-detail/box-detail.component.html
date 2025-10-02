@@ -7,7 +7,7 @@
       <ol class="flex items-center space-x-4 min-w-0 flex-1">
         <li class="flex-shrink-0">
           <a
-            class="text-gray-400 dark:text-neutral-500 hover:text-gray-500 dark:hover:text-neutral-400 transition-colors duration-200 cursor-pointer"
+            class="text-gray-400 dark:text-neutral-500 hover:text-gray-500 dark:hover:text-neutral-400 cursor-pointer"
             routerLink="/boxes">
             <ng-icon
               class="translate-0.5"
@@ -25,20 +25,20 @@
                 [svg]="ICONS.chevronRight" />
             </div>
             <span
-              class="ml-4 text-sm font-medium text-gray-500 dark:text-neutral-400 transition-colors duration-200 truncate min-w-0">{{ box.name }}</span>
+              class="ml-4 text-sm font-medium text-gray-500 dark:text-neutral-400 truncate min-w-0">{{ box.name }}</span>
           </div>
         </li>
       </ol>
     </nav>
     <div
-      class="bg-white dark:bg-neutral-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
+      class="bg-white dark:bg-neutral-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-neutral-600">
       <div class="px-4 py-5 sm:p-6">
         <div class="sm:flex sm:items-center sm:justify-between">
           <div class="flex items-center justify-between sm:justify-start w-full">
             <div class="flex items-center min-w-0 flex-1">
               <div class="flex-shrink-0">
                 <div
-                  class="h-12 w-12 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center transition-colors duration-200">
+                  class="h-12 w-12 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
                   <svg class="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <use href="#icon-box" />
                   </svg>
@@ -46,11 +46,11 @@
               </div>
               <div class="ml-4 flex-1 min-w-0">
                 <div class="flex items-center gap-2 min-w-0">
-                  <h1 class="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-200 truncate min-w-0">
+                  <h1 class="text-2xl font-bold text-gray-900 dark:text-white truncate min-w-0">
                     {{ box.name }}
                   </h1>
                   <a
-                    class="hidden sm:inline-flex items-center justify-center p-1.5 text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-md transition-colors duration-200 cursor-pointer flex-shrink-0"
+                    class="hidden sm:inline-flex items-center justify-center p-1.5 text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-md cursor-pointer flex-shrink-0"
                     title="Edit box"
                     [routerLink]="['/edit-box', box.id]">
                     <ng-icon
@@ -58,14 +58,14 @@
                       [svg]="ICONS.edit" />
                   </a>
                 </div>
-                <p class="text-sm text-gray-500 dark:text-neutral-400 mt-1 transition-colors duration-200 truncate">
+                <p class="text-sm text-gray-500 dark:text-neutral-400 mt-1 truncate">
                   {{ box.description || 'No description provided' }}
                 </p>
               </div>
             </div>
             <!-- Mobile edit button - top right -->
             <a
-              class="sm:hidden inline-flex items-center justify-center p-2 text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-md transition-colors duration-200 cursor-pointer"
+              class="sm:hidden inline-flex items-center justify-center p-2 text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-md cursor-pointer"
               title="Edit box"
               [routerLink]="['/edit-box', box.id]">
               <ng-icon
@@ -75,7 +75,7 @@
           </div>
           <div class="mt-4 sm:mt-0 sm:ml-4 flex justify-end gap-2 sm:gap-3 min-w-2xs">
             <button
-              class="flex-1 sm:flex-initial inline-flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-600 focus:outline-none focus:ring-1 focus:ring-primary-500 transition-colors duration-200 cursor-pointer"
+              class="flex-1 sm:flex-initial inline-flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-600 focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer"
               (click)="openDialog()">
               <ng-icon
                 class="mr-1"
@@ -85,7 +85,7 @@
               <span class="sm:hidden ml-1">QR Code</span>
             </button>
             <button
-              class="flex-1 sm:flex-initial inline-flex items-center justify-center px-3 py-2 border border-red-300 dark:border-red-700 rounded-md shadow-sm text-sm font-medium text-red-700 dark:text-red-400 bg-white dark:bg-neutral-700 hover:bg-red-50 dark:hover:bg-red-900 focus:outline-none focus:ring-1 focus:ring-red-500 transition-colors duration-200 cursor-pointer"
+              class="flex-1 sm:flex-initial inline-flex items-center justify-center px-3 py-2 border border-red-300 dark:border-red-700 rounded-md shadow-sm text-sm font-medium text-red-700 dark:text-red-400 bg-white dark:bg-neutral-700 hover:bg-red-50 dark:hover:bg-red-900 focus:outline-none focus:ring-1 focus:ring-red-500 cursor-pointer"
               (click)="deleteBox(box.id)">
               <ng-icon
                 class="mr-1"
@@ -102,17 +102,17 @@
 
   <!-- Items Section -->
   <div
-    class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-gray-200 dark:border-neutral-600 transition-colors duration-200">
+    class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-gray-200 dark:border-neutral-600">
     <div class="px-4 py-5 sm:p-6">
       <div class="sm:flex sm:items-center sm:justify-between mb-6">
         <div>
-          <h2 class="text-lg font-medium text-gray-900 dark:text-white transition-colors duration-200">Items in {{ box.name }}</h2>
-          <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400 transition-colors duration-200">
+          <h2 class="text-lg font-medium text-gray-900 dark:text-white">Items in {{ box.name }}</h2>
+          <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400">
             Manage all items stored in this box.
           </p>
         </div>
         <div class="mt-4 sm:mt-0">
-          <a class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-200 cursor-pointer"
+          <a class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
             [routerLink]="['/box', box.id, 'add-item']">
             <ng-icon
               class="mr-2"
@@ -145,16 +145,16 @@
           </div>
         } @else if (state.items.length === 0) {
           <div class="text-center py-8">
-            <div class="mx-auto text-gray-400 dark:text-neutral-500 transition-colors duration-200">
+            <div class="mx-auto text-gray-400 dark:text-neutral-500">
               <ng-icon
                 size="5rem"
                 [svg]="ICONS.document" />
             </div>
-            <h3 class="mt-1 text-sm font-medium text-gray-900 dark:text-white transition-colors duration-200">No items</h3>
-            <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400 transition-colors duration-200">Get started by adding your first item
+            <h3 class="mt-1 text-sm font-medium text-gray-900 dark:text-white">No items</h3>
+            <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400">Get started by adding your first item
               to this box.</p>
             <div class="mt-4">
-              <a class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-200 cursor-pointer"
+              <a class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 cursor-pointer"
                 [routerLink]="['/box', box.id, 'add-item']">
                 Add your first item
               </a>
@@ -164,17 +164,17 @@
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (item of state.items; track item.id) {
               <div
-                class="relative rounded-lg border border-gray-200 dark:border-neutral-600 bg-gray-50 dark:bg-neutral-700 px-6 py-4 hover:bg-white dark:hover:bg-neutral-600 hover:shadow-sm transition-all duration-200">
+                class="relative rounded-lg border border-gray-200 dark:border-neutral-600 bg-gray-50 dark:bg-neutral-700 px-6 py-4 hover:bg-white dark:hover:bg-neutral-600 hover:shadow-sm">
                 <div class="flex items-start justify-between">
                   <div class="flex-1 min-w-0">
-                    <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate transition-colors duration-200">{{ item.name }}
+                    <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ item.name }}
                     </h4>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400 transition-colors duration-200">
+                    <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400">
                       {{ item.description || 'No description' }}
                     </p>
                   </div>
                   <div class="ml-4 flex-shrink-0 flex space-x-2">
-                    <a class="text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200 cursor-pointer"
+                    <a class="text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer"
                       title="Edit item"
                       [routerLink]="['/box', box.id, 'edit-item', item.id]">
                       <ng-icon
@@ -182,7 +182,7 @@
                         [svg]="ICONS.edit" />
                     </a>
                     <button
-                      class="text-gray-400 dark:text-neutral-500 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
+                      class="text-gray-400 dark:text-neutral-500 hover:text-blue-500 dark:hover:text-blue-400 cursor-pointer"
                       title="Move item to another box"
                       (click)="item.id && openMoveItemDialog(item.id)">
                       <ng-icon
@@ -190,7 +190,7 @@
                         [svg]="ICONS.move" />
                     </button>
                     <button
-                      class="text-gray-400 dark:text-neutral-500 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200 cursor-pointer"
+                      class="text-gray-400 dark:text-neutral-500 hover:text-red-500 dark:hover:text-red-400 cursor-pointer"
                       title="Delete item"
                       (click)="deleteItem(item.id)">
                       <ng-icon
@@ -219,7 +219,7 @@
         [width]="256" />
       <div class="mt-4 flex justify-end">
         <button
-          class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-neutral-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-600 focus:outline-none focus:ring-1 focus:ring-primary-500 transition-colors duration-200 cursor-pointer"
+          class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-neutral-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-600 focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer"
           (click)="closeDialog()">
           Close
         </button>
