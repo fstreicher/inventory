@@ -62,11 +62,17 @@ export class FirestoreService {
   }
 
   async #encryptBox(box: Box): Promise<Box> {
-    return {
+    const encryptedBox: Box = {
       name: await this.#encryptionService.encryptText(box.name),
-      description: await this.#encryptionService.encryptText(box.description),
       userId: this.#getCurrentUserId()
     };
+
+    // Only add description if it exists and is not empty
+    if (box.description && box.description.trim() !== '') {
+      encryptedBox.description = await this.#encryptionService.encryptText(box.description);
+    }
+
+    return encryptedBox;
   }
 
   async #decryptBox(encryptedBox: Box): Promise<Box> {
@@ -78,11 +84,20 @@ export class FirestoreService {
   }
 
   async #encryptItem(item: Item): Promise<Item> {
-    return {
-      name: await this.#encryptionService.encryptText(item.name),
-      description: await this.#encryptionService.encryptText(item.description),
-      imageUrl: item.imageUrl // Image URLs don't need encryption as they're already secure Firebase URLs
+    const encryptedItem: Item = {
+      name: await this.#encryptionService.encryptText(item.name)
     };
+
+    // Only add description if it exists and is not empty
+    if (item.description && item.description.trim() !== '') {
+      encryptedItem.description = await this.#encryptionService.encryptText(item.description);
+    }
+
+    if (item.imageUrl) {
+      encryptedItem.imageUrl = item.imageUrl; // Image URLs don't need encryption
+    }
+
+    return encryptedItem;
   }
 
   async #decryptItem(encryptedItem: Item): Promise<Item> {
@@ -235,7 +250,7 @@ export class FirestoreService {
         return this.getItem(boxId, itemId).pipe(
           switchMap(item => {
             const itemDocRef = doc(this.#firestore, `boxes/${boxId}/items/${itemId}`);
-            
+
             // Delete the item document first
             return from(deleteDoc(itemDocRef)).pipe(
               switchMap(() => {
@@ -254,6 +269,34 @@ export class FirestoreService {
               })
             );
           })
+        );
+      })
+    );
+  }
+
+  public moveItem(sourceBoxId: string, targetBoxId: string, itemId: string): Observable<void> {
+    // Verify ownership of both boxes and get the item to move
+    return this.#verifyBoxOwnership(sourceBoxId).pipe(
+      switchMap(() => this.#verifyBoxOwnership(targetBoxId)),
+      switchMap(() => this.getItem(sourceBoxId, itemId)),
+      switchMap(item => {
+        if (!item) {
+          return throwError(() => new Error('Item not found'));
+        }
+
+        // Create a copy of the item without the ID for the new location
+        const itemToMove: Item = {
+          name: item.name
+        };
+
+        // Only include description if it exists and is not empty
+        if (item.description && item.description.trim() !== '') {
+          itemToMove.description = item.description;
+        }
+
+        // Add item to target box and then delete from source box
+        return this.addItem(targetBoxId, itemToMove).pipe(
+          switchMap(() => this.deleteItem(sourceBoxId, itemId))
         );
       })
     );

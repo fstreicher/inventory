@@ -3,6 +3,17 @@ import { Component, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { User } from '@angular/fire/auth';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NgIconComponent } from '@ng-icons/core';
+import {
+  matClose,
+  matLightMode,
+  matLogout,
+  matMenu,
+  matNightlightRound,
+  matQrCodeScanner,
+  matWifi,
+  matWifiOff
+} from '@ng-icons/material-icons/baseline';
 import { map, Observable } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { OfflineService } from '../services/offline.service';
@@ -15,12 +26,24 @@ import { ThemeService } from '../services/theme.service';
     CommonModule,
     RouterLink,
     RouterLinkActive,
+    NgIconComponent,
   ],
 })
 export class NavigationComponent {
   readonly #authService = inject(AuthService);
   protected themeService = inject(ThemeService);
   protected offlineService = inject(OfflineService);
+
+  protected readonly ICONS = {
+    close: matClose,
+    menu: matMenu,
+    logout: matLogout,
+    qrCodeScanner: matQrCodeScanner,
+    wifi: matWifi,
+    wifiOff: matWifiOff,
+    lightMode: matLightMode,
+    darkMode: matNightlightRound,
+  };
 
   protected isMobileMenuOpen = false;
   protected user$: Observable<User | null> = this.#authService.user$;
@@ -67,7 +90,7 @@ export class NavigationComponent {
   }
 
   protected getThemeIcon(): string {
-    return this.themeService.isDark() ? 'icon-moon' : 'icon-sun';
+    return this.themeService.isDark() ? this.ICONS.darkMode : this.ICONS.lightMode;
   }
 
   protected getThemeLabel(): string {

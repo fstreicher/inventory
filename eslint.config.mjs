@@ -44,7 +44,7 @@ export default defineConfig(
       '@typescript-eslint/array-type': ['warn', { default: 'generic' }],
       '@typescript-eslint/default-param-last': 'error',
       '@typescript-eslint/explicit-function-return-type': 'error',
-      
+
       // Enforce explicit member accessibility (aligns with your # private field preference)
       '@typescript-eslint/explicit-member-accessibility': [
         'error',
@@ -69,7 +69,7 @@ export default defineConfig(
       '@typescript-eslint/no-shadow': 'error',
       '@typescript-eslint/prefer-optional-chain': 'warn',
       '@typescript-eslint/unbound-method': 'off',
-      
+
       // Additional rules for your coding standards
       '@typescript-eslint/prefer-readonly': 'warn',
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
@@ -111,10 +111,10 @@ export default defineConfig(
           order: [
             'STRUCTURAL_DIRECTIVE',
             'TEMPLATE_REFERENCE',
+            'ATTRIBUTE_BINDING',
             'INPUT_BINDING',
             'TWO_WAY_BINDING',
             'OUTPUT_BINDING',
-            'ATTRIBUTE_BINDING'
           ]
         }
       ],

@@ -1,13 +1,20 @@
 import { Component, inject } from '@angular/core';
+import { NgIconComponent } from '@ng-icons/core';
+import { matError, matSync } from '@ng-icons/material-icons/baseline';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'inv-login',
   templateUrl: './login.component.html',
-  imports: [],
+  imports: [NgIconComponent],
 })
 export class LoginComponent {
   readonly #authService = inject(AuthService);
+
+  protected readonly ICONS = {
+    error: matError,
+    sync: matSync,
+  };
 
   public isLoading = false;
   public errorMessage = '';

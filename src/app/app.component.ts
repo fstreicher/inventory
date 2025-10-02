@@ -7,7 +7,7 @@ import { NavigationComponent } from './navigation/navigation.component';
   templateUrl: './app.component.html',
   imports: [
     RouterOutlet,
-    NavigationComponent
+    NavigationComponent,
   ],
 })
 export class AppComponent {
