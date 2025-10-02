@@ -22,7 +22,7 @@
       </div>
 
       <!-- User info and sign out (Desktop) -->
-      @if (user$ | async; as user) {
+      @if (user$ | async) {
         <div class="hidden md:flex items-center space-x-4">
           <!-- Offline Status Indicator -->
           <div class="flex items-center space-x-2">
@@ -79,13 +79,11 @@
           <!-- Mobile Offline Status -->
           @if (isOnline$ | async) {
             <div class="flex items-center space-x-1 text-green-600 dark:text-green-400" title="Online">
-              <div class="h-4 w-4">
                 <ng-icon size="16" [svg]="ICONS.wifi" />
-              </div>
             </div>
           } @else {
             <div class="flex items-center space-x-1 text-amber-600 dark:text-amber-400" title="Offline">
-              <div class="h-4 w-4 animate-pulse">
+              <div class="animate-pulse">
                 <ng-icon size="16" [svg]="ICONS.wifiOff" />
               </div>
             </div>
@@ -96,9 +94,7 @@
             class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"
             routerLink="/scan"
             title="Scan QR Code">
-            <div class="h-5 w-5">
               <ng-icon size="20" [svg]="ICONS.qrCodeScanner" />
-            </div>
           </a>
           <button
             class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md transition-colors duration-200"

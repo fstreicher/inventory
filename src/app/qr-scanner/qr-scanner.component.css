@@ -2,7 +2,7 @@
   position: relative;
   display: block;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -11,30 +11,34 @@
 }
 
 .overlay {
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   background: #222222;
   position: relative;
+  overflow: hidden;
 }
 
 .overlay video {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
 .cutout-wrapper {
   --p: 30px;
   padding: var(--p);
-  height: 175px;
-  width: 100vw;
   position: absolute;
   top: 50%;
-  left: 0;
-  transform: translateY(-50%);
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 2;
+  width: calc(100vw - 60px); /* Account for padding */
+  height: calc(100vw - 60px); /* Make it square */
+  max-width: calc(100vh - 200px); /* Ensure it fits vertically with safe areas */
+  max-height: calc(100vh - 200px);
 }
 
 .cutout-wrapper .cutout {
