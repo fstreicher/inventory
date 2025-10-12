@@ -1,26 +1,40 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { NgIconComponent } from '@ng-icons/core';
+import { matError, matSync } from '@ng-icons/material-icons/baseline';
+import { toast } from 'ngx-sonner';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'inv-login',
-  standalone: true,
-  imports: [],
   templateUrl: './login.component.html',
+  imports: [NgIconComponent],
 })
 export class LoginComponent {
-  private authService = inject(AuthService);
+  readonly #authService = inject(AuthService);
 
-  isLoading = false;
-  errorMessage = '';
+  protected readonly ICONS = {
+    error: matError,
+    sync: matSync,
+  };
 
-  async signInWithGoogle(): Promise<void> {
+  public isLoading = false;
+  public errorMessage = '';
+
+  public async signInWithGoogle(): Promise<void> {
     this.isLoading = true;
     this.errorMessage = '';
 
     try {
-      await this.authService.signInWithGoogle();
-    } catch (error: any) {
-      this.errorMessage = error.message || 'Failed to sign in. Please try again.';
+      await this.#authService.signInWithGoogle();
+      toast.success('Successfully signed in');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.errorMessage = error.message || 'Failed to sign in. Please try again.';
+        toast.error(this.errorMessage);
+      } else {
+        this.errorMessage = 'Failed to sign in. Please try again.';
+        toast.error(this.errorMessage);
+      }
     } finally {
       this.isLoading = false;
     }

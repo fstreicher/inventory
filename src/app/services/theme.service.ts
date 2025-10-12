@@ -7,15 +7,15 @@ export type Theme = 'light' | 'dark';
   providedIn: 'root'
 })
 export class ThemeService {
-  private platformId = inject(PLATFORM_ID);
-  private isBrowser = isPlatformBrowser(this.platformId);
+  readonly #platformId = inject(PLATFORM_ID);
+  readonly #isBrowser = isPlatformBrowser(this.#platformId);
   
   // Reactive signals for theme state
   public theme = signal<Theme>('light');
   public isDark = signal<boolean>(false);
   
   constructor() {
-    if (this.isBrowser) {
+    if (this.#isBrowser) {
       // Initialize theme from localStorage or browser preference
       const savedTheme = localStorage.getItem('theme') as Theme;
       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -25,16 +25,16 @@ export class ThemeService {
       
       // Update dark mode state when theme changes
       effect(() => {
-        this.updateDarkMode();
+        this.#updateDarkMode();
       });
       
       // Set initial dark mode state
-      this.updateDarkMode();
+      this.#updateDarkMode();
     }
   }
   
-  private updateDarkMode(): void {
-    if (!this.isBrowser) return;
+  #updateDarkMode(): void {
+    if (!this.#isBrowser) return;
     
     const currentTheme = this.theme();
     const isDark = currentTheme === 'dark';

@@ -1,0 +1,33 @@
+<div class="pt-safe-offset-4 absolute top-0 left-0 z-10 flex w-full justify-between p-4">
+  <button
+    class="ml-auto flex justify-center rounded-xl border bg-black/50 p-2 align-middle text-white focus:ring-3 focus:outline-hidden active:bg-black/75"
+    (click)="close()"
+  >
+    <div class="h-5 w-5">
+      <ng-icon size="1.25rem" [svg]="ICONS.close" />
+    </div>
+  </button>
+</div>
+
+<!--
+    The overlay container will also serve as the fallback for the video element
+    of the camera preview plugin for the web platform.
+-->
+<div class="overlay">
+  <video 
+    #video 
+    autoplay 
+    preload="metadata"
+    [muted]="true"
+    [playsInline]="true">
+  </video>
+
+  <div class="cutout-wrapper">
+    <div #cutout class="cutout">
+      <div class="top-left-corner"></div>
+      <div class="top-right-corner"></div>
+      <div class="bottom-left-corner"></div>
+      <div class="bottom-right-corner"></div>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  emulatorHost: '192.168.10.100',
   firebase: {
     apiKey: 'AIzaSyCm-bjoPYINN8T-OWy3pnhCYB-lSU6-P-A',
     authDomain: 'inventory-fstreicher.firebaseapp.com',

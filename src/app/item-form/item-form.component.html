@@ -1,61 +1,36 @@
 <div class="mb-8">
-  <nav class="flex mb-4" aria-label="Breadcrumb">
-    <ol class="flex items-center space-x-4">
-      <li>
-        <div>
-          <a routerLink="/boxes" class="text-gray-400 dark:text-neutral-500 hover:text-gray-500 dark:hover:text-neutral-400 transition-colors duration-200">
-            <svg class="flex-shrink-0 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-              <use href="#icon-home"></use>
-            </svg>
-            <span class="sr-only">All Boxes</span>
-          </a>
-        </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <svg class="flex-shrink-0 h-5 w-5 text-gray-400 dark:text-neutral-500" fill="currentColor" viewBox="0 0 20 20">
-            <use href="#icon-chevron-right-small"></use>
-          </svg>
-          <a [routerLink]="['/box', boxId]" class="ml-4 text-sm font-medium text-gray-500 dark:text-neutral-400 hover:text-gray-700 dark:hover:text-neutral-300 transition-colors duration-200">
-            {{ boxName || 'Box' }}
-          </a>
-        </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <svg class="flex-shrink-0 h-5 w-5 text-gray-400 dark:text-neutral-500" fill="currentColor" viewBox="0 0 20 20">
-            <use href="#icon-chevron-right-small"></use>
-          </svg>
-          <span class="ml-4 text-sm font-medium text-gray-500 dark:text-neutral-400 transition-colors duration-200">{{ itemId ? 'Edit Item' : 'Add Item' }}</span>
-        </div>
-      </li>
-    </ol>
-  </nav>
+  <inv-breadcrumb [items]="breadcrumbItems()" />
 
   <div class="md:grid md:grid-cols-3 md:gap-6">
     <div class="md:col-span-1">
       <div class="px-4 sm:px-0">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-200">{{ itemId ? 'Edit Item' : 'Add New Item' }}</h1>
-        <p class="mt-2 text-sm text-gray-600 dark:text-neutral-400 transition-colors duration-200">
-          {{ itemId ? 'Update the details of this item.' : 'Add a new item to your storage box.' }}
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ itemId() ? 'Edit Item' : 'Add New Item' }}
+        </h1>
+        <p class="mt-2 text-sm text-gray-600 dark:text-neutral-400">
+          {{ itemId() ? 'Update the details of this item.' : 'Add a new item to your storage box.' }}
         </p>
       </div>
     </div>
     <div class="mt-5 md:mt-0 md:col-span-2">
-      <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+      <form
+        [formGroup]="itemForm"
+        (ngSubmit)="onSubmit()">
         <div class="shadow-sm rounded-lg">
-          <div class="px-4 py-5 bg-white dark:bg-neutral-800 space-y-6 sm:p-6 rounded-t-lg transition-colors duration-200">
+          <div class="px-4 py-5 bg-white dark:bg-neutral-800 space-y-6 sm:p-6 rounded-t-lg">
             <div>
-              <label for="name" class="block text-sm font-medium text-gray-700 dark:text-neutral-300 transition-colors duration-200">Item Name</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-neutral-300" for="name">Item
+                Name</label>
               <div class="mt-1">
-                <input id="name" 
-                       type="text" 
-                       formControlName="name"
-                       placeholder="e.g., Blue Winter Coat, Kitchen Timer, etc."
-                       class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-white rounded-md placeholder-gray-400 dark:placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors duration-200"
-                       [class.border-red-300]="itemForm.get('name')?.invalid && itemForm.get('name')?.touched"
-                       [class.focus:ring-red-500]="itemForm.get('name')?.invalid && itemForm.get('name')?.touched"
-                       [class.focus:border-red-500]="itemForm.get('name')?.invalid && itemForm.get('name')?.touched">
+                <input
+                  class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-white rounded-md placeholder-gray-400 dark:placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  formControlName="name"
+                  id="name"
+                  placeholder="e.g., Blue Winter Coat, Kitchen Timer, etc."
+                  type="text"
+                  [class.border-red-300]="itemForm.get('name')?.invalid && itemForm.get('name')?.touched"
+                  [class.focus:border-red-500]="itemForm.get('name')?.invalid && itemForm.get('name')?.touched"
+                  [class.focus:ring-red-500]="itemForm.get('name')?.invalid && itemForm.get('name')?.touched">
               </div>
               @if (itemForm.get('name')?.invalid && itemForm.get('name')?.touched) {
                 <div class="mt-2 text-sm text-red-600">
@@ -65,35 +40,49 @@
             </div>
 
             <div>
-              <label for="description" class="block text-sm font-medium text-gray-700 dark:text-neutral-300 transition-colors duration-200">Description</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-neutral-300"
+                for="description">Description</label>
               <div class="mt-1">
-                <textarea id="description" 
-                          formControlName="description"
-                          rows="4"
-                          placeholder="Describe this item, its condition, color, size, etc..."
-                          class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-white rounded-md placeholder-gray-400 dark:placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors duration-200"></textarea>
+                <textarea
+                  class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-white rounded-md placeholder-gray-400 dark:placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  formControlName="description"
+                  id="description"
+                  placeholder="Describe this item, its condition, color, size, etc..."
+                  rows="4"></textarea>
               </div>
-              <p class="mt-2 text-sm text-gray-500 dark:text-neutral-400 transition-colors duration-200">
+              <p class="mt-2 text-sm text-gray-500 dark:text-neutral-400">
                 Add details to help you identify this item later (optional).
               </p>
             </div>
+
+            <div>
+              <inv-image-upload
+                [boxId]="boxId()"
+                [imageUrl]="currentImageUrl"
+                [itemId]="itemId() || 'new'"
+                (imageRemoved)="onImageRemoved()"
+                (imageUploaded)="onImageUploaded($event)" />
+            </div>
           </div>
-          <div class="px-4 py-3 bg-gray-50 dark:bg-neutral-700 text-right sm:px-6 rounded-b-lg transition-colors duration-200">
+          <div class="px-4 py-3 bg-gray-50 dark:bg-neutral-700 text-right sm:px-6 rounded-b-lg">
             <div class="flex justify-end space-x-3">
-              <button type="button" 
-                      (click)="cancel()"
-                      class="bg-white dark:bg-neutral-600 py-2 px-4 border border-gray-300 dark:border-neutral-500 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-neutral-200 hover:bg-gray-50 dark:hover:bg-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+              <button
+                class="bg-white dark:bg-neutral-600 py-2 px-4 border border-gray-300 dark:border-neutral-500 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-neutral-200 hover:bg-gray-50 dark:hover:bg-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+                type="button"
+                (click)="cancel()">
                 Cancel
               </button>
-              <button type="submit" 
-                      [disabled]="!itemForm.valid"
-                      class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-gray-400 dark:disabled:bg-neutral-600 disabled:cursor-not-allowed transition-colors duration-200">
-                @if (isSubmitting) {
-                  <svg class="-ml-1 mr-2 h-4 w-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
-                    <use href="#icon-spinner"></use>
-                  </svg>
+              <button
+                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-400 dark:disabled:bg-neutral-600 disabled:cursor-not-allowed cursor-pointer"
+                type="submit"
+                [disabled]="!isFormValid()">
+                @if (isSubmitting()) {
+                  <ng-icon
+                    class="translate-0.5 animate-[spin_1s_linear_infinite_reverse]"
+                    size="1.125rem"
+                    [svg]="ICONS.spinner" />
                 }
-                {{ isSubmitting ? 'Saving...' : (itemId ? 'Update Item' : 'Add Item') }}
+                {{ isSubmitting() ? 'Saving...' : (itemId() ? 'Update Item' : 'Add Item') }}
               </button>
             </div>
           </div>

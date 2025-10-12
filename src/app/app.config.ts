@@ -2,6 +2,7 @@ import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core
 import { initializeApp, provideFirebaseApp, getApp } from '@angular/fire/app';
 import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
 import { connectFirestoreEmulator, initializeFirestore, provideFirestore, persistentLocalCache, persistentMultipleTabManager } from '@angular/fire/firestore';
+import { connectStorageEmulator, getStorage, provideStorage } from '@angular/fire/storage';
 import { provideRouter } from '@angular/router';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
@@ -17,10 +18,10 @@ export const appConfig: ApplicationConfig = {
       if (!environment.production) {
         // Connect to auth emulator in development - only if not already connected
         try {
-          connectAuthEmulator(auth, `http://localhost:${firebase.emulators.auth.port}`);
-        } catch (error) {
+          connectAuthEmulator(auth, `http://${environment.emulatorHost}:${firebase.emulators.auth.port}`);
+        } catch (error: unknown) {
           // Emulator already connected, ignore error
-          console.log('Auth emulator already connected');
+          console.warn('Auth emulator already connected', error);
         }
       }
       return auth;
@@ -33,18 +34,31 @@ export const appConfig: ApplicationConfig = {
           tabManager: persistentMultipleTabManager()
         })
       });
-      
+
       if (!environment.production) {
         // Connect to emulator in development - only if not already connected
         try {
-          connectFirestoreEmulator(firestore, 'localhost', firebase.emulators.firestore.port);
-        } catch (error) {
+          connectFirestoreEmulator(firestore, environment.emulatorHost, firebase.emulators.firestore.port);
+        } catch (error: unknown) {
           // Emulator already connected, ignore error
-          console.log('Firestore emulator already connected');
+          console.warn('Firestore emulator already connected', error);
         }
       }
-      
+
       return firestore;
+    }),
+    provideStorage(() => {
+      const storage = getStorage();
+      if (!environment.production) {
+        // Connect to storage emulator in development - only if not already connected
+        try {
+          connectStorageEmulator(storage, environment.emulatorHost, firebase.emulators.storage.port);
+        } catch (error: unknown) {
+          // Emulator already connected, ignore error
+          console.warn('Storage emulator already connected', error);
+        }
+      }
+      return storage;
     }),
   ]
 };

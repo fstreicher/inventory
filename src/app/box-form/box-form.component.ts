@@ -1,39 +1,56 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FirestoreService, Box } from '../firestore.service';
-import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgIconComponent } from '@ng-icons/core';
+import { matArrowForwardIos, matSync } from '@ng-icons/material-icons/baseline';
+import { toast } from 'ngx-sonner';
+import { BreadcrumbComponent, type BreadcrumbItem } from '../breadcrumb/breadcrumb.component';
+import { Box, FirestoreService } from '../services/firestore.service';
 
 @Component({
   selector: 'inv-box-form',
-  standalone: true,
   templateUrl: './box-form.component.html',
   imports: [
     ReactiveFormsModule,
-    RouterLink
+    NgIconComponent,
+    BreadcrumbComponent,
   ],
 })
 export class BoxFormComponent implements OnInit {
-  private fb: FormBuilder = inject(FormBuilder);
-  private firestoreService: FirestoreService = inject(FirestoreService);
-  private route: ActivatedRoute = inject(ActivatedRoute);
-  private router: Router = inject(Router);
+  readonly #fb: FormBuilder = inject(FormBuilder);
+  readonly #firestoreService: FirestoreService = inject(FirestoreService);
+  readonly #route: ActivatedRoute = inject(ActivatedRoute);
+  readonly #router: Router = inject(Router);
 
-  boxForm: FormGroup;
-  boxId: string | null = null;
-  isSubmitting: boolean = false;
+  protected boxForm: FormGroup;
+  protected boxId: string | null = null;
+  protected isSubmitting: boolean = false;
+
+  protected get breadcrumbItems(): Array<BreadcrumbItem> {
+    return [
+      {
+        label: this.boxId ? 'Edit Box' : 'Add Box',
+        isCurrentPage: true
+      }
+    ];
+  }
+
+  protected readonly ICONS = {
+    chevronRight: matArrowForwardIos,
+    spinner: matSync
+  };
 
   constructor() {
-    this.boxForm = this.fb.group({
+    this.boxForm = this.#fb.group({
       name: ['', Validators.required],
       description: ['']
     });
   }
 
-  ngOnInit(): void {
-    this.boxId = this.route.snapshot.paramMap.get('id');
+  public ngOnInit(): void {
+    this.boxId = this.#route.snapshot.paramMap.get('id');
     if (this.boxId) {
-      this.firestoreService.getBox(this.boxId).subscribe(box => {
+      this.#firestoreService.getBox(this.boxId).subscribe((box: Box | undefined) => {
         if (box) {
           this.boxForm.patchValue(box);
         }
@@ -41,50 +58,54 @@ export class BoxFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     if (this.boxForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
-      const boxData = this.boxForm.value;
+      const boxData = this.boxForm.value as Box;
 
       if (this.boxId) {
         // For updates, we need to preserve the existing userId and id
-        this.firestoreService.getBox(this.boxId).subscribe({
-          next: (existingBox) => {
+        this.#firestoreService.getBox(this.boxId).subscribe({
+          next: (existingBox: Box | undefined) => {
             if (existingBox) {
               const updatedBox: Box = {
                 ...existingBox,
                 ...boxData,
                 id: this.boxId!
               };
-              this.firestoreService.updateBox(updatedBox).subscribe({
+              this.#firestoreService.updateBox(updatedBox).subscribe({
                 next: () => {
-                  console.log('Box updated successfully!');
-                  this.router.navigate(['/box', this.boxId]);
+                  toast.success('Box updated successfully');
+                  this.#router.navigate(['/box', this.boxId]);
                 },
-                error: (error) => {
+                error: (error: unknown) => {
                   console.error('Error updating box:', error);
+                  toast.error('Failed to update box');
                   this.isSubmitting = false;
                 }
               });
             } else {
               console.error('Box not found');
+              toast.error('Box not found');
               this.isSubmitting = false;
             }
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error fetching box for update:', error);
+            toast.error('Failed to load box data');
             this.isSubmitting = false;
           }
         });
       } else {
         // For new boxes, the service will add the userId automatically
-        this.firestoreService.addBox(boxData).subscribe({
-          next: (docRef) => {
-            console.log('Box added successfully!');
-            this.router.navigate(['/boxes']);
+        this.#firestoreService.addBox(boxData).subscribe({
+          next: () => {
+            toast.success('Box created successfully');
+            this.#router.navigate(['/boxes']);
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error adding box:', error);
+            toast.error('Failed to create box');
             this.isSubmitting = false;
           }
         });
@@ -92,11 +113,11 @@ export class BoxFormComponent implements OnInit {
     }
   }
 
-  cancel(): void {
+  protected cancel(): void {
     if (this.boxId) {
-      this.router.navigate(['/box', this.boxId]);
+      this.#router.navigate(['/box', this.boxId]);
     } else {
-      this.router.navigate(['/boxes']);
+      this.#router.navigate(['/boxes']);
     }
   }
 }

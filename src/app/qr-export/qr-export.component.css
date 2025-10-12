@@ -1,0 +1,60 @@
+/* Dialog backdrop styling */
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Center dialog on the page */
+dialog {
+  margin: auto;
+}
+
+/* Print-specific styles */
+@media print {
+  /* Hide elements with no-print class */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Hide dialog backdrop when printing */
+  dialog::backdrop {
+    display: none;
+  }
+
+  /* Make dialog take full page when printing */
+  dialog {
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+    width: 100% !important;
+    height: auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+
+  /* Ensure proper page breaks */
+  .qr-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Optimize for printing */
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Ensure QR codes are crisp */
+  img {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove shadows and transitions for print */
+  * {
+    box-shadow: none !important;
+    transition: none !important;
+  }
+}

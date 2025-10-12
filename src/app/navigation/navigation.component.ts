@@ -1,43 +1,64 @@
-import { Component, computed, inject, Signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../auth.service';
-import { ThemeService } from '../theme.service';
-import { OfflineService } from '../offline.service';
-import { map, Observable } from 'rxjs';
-import { User } from '@angular/fire/auth';
+import { Component, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { User } from '@angular/fire/auth';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NgIconComponent } from '@ng-icons/core';
+import {
+  matClose,
+  matLightMode,
+  matLogout,
+  matMenu,
+  matNightlightRound,
+  matQrCodeScanner,
+  matWifi,
+  matWifiOff
+} from '@ng-icons/material-icons/baseline';
+import { map, Observable } from 'rxjs';
+import { AuthService } from '../services/auth.service';
+import { OfflineService } from '../services/offline.service';
+import { ThemeService } from '../services/theme.service';
 
 @Component({
   selector: 'inv-navigation',
-  standalone: true,
   templateUrl: './navigation.component.html',
   imports: [
     CommonModule,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    NgIconComponent,
   ],
 })
 export class NavigationComponent {
-  private authService = inject(AuthService);
+  readonly #authService = inject(AuthService);
   protected themeService = inject(ThemeService);
   protected offlineService = inject(OfflineService);
 
+  protected readonly ICONS = {
+    close: matClose,
+    menu: matMenu,
+    logout: matLogout,
+    qrCodeScanner: matQrCodeScanner,
+    wifi: matWifi,
+    wifiOff: matWifiOff,
+    lightMode: matLightMode,
+    darkMode: matNightlightRound,
+  };
+
   protected isMobileMenuOpen = false;
-  protected user$: Observable<User | null> = this.authService.user$;
+  protected user$: Observable<User | null> = this.#authService.user$;
   protected isOnline$ = this.offlineService.isOnline$;
 
   protected navItems = [
-    { label: 'All boxes', path: '/boxes' },
+    { label: 'My boxes', path: '/boxes' },
     { label: 'Search Items', path: '/search' },
     { label: 'Add box', path: '/add-box' },
   ];
 
   protected name: Signal<string | null> = toSignal(
-    this.authService.user$.pipe(
+    this.#authService.user$.pipe(
       // Map to display name or email
-      map(user => {
-        console.debug('User data:', user);
+      map((user: User | null) => {
         return (
           user?.displayName?.split(' ')[0] ||
           user?.email ||
@@ -48,31 +69,31 @@ export class NavigationComponent {
     { initialValue: 'User' }
   );
 
-  public toggleMobileMenu() {
+  protected toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
-  public closeMobileMenu() {
+  protected closeMobileMenu(): void {
     this.isMobileMenuOpen = false;
   }
 
-  public async signOut() {
+  protected async signOut(): Promise<void> {
     try {
-      await this.authService.signOut();
+      await this.#authService.signOut();
     } catch (error) {
       console.error('Sign out failed:', error);
     }
   }
 
-  public toggleTheme() {
+  protected toggleTheme(): void {
     this.themeService.toggleTheme();
   }
 
-  public getThemeIcon(): string {
-    return this.themeService.isDark() ? 'icon-moon' : 'icon-sun';
+  protected getThemeIcon(): string {
+    return this.themeService.isDark() ? this.ICONS.darkMode : this.ICONS.lightMode;
   }
 
-  public getThemeLabel(): string {
+  protected getThemeLabel(): string {
     return this.themeService.theme() === 'dark' ? 'Dark' : 'Light';
   }
 }

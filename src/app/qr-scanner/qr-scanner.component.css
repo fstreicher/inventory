@@ -1,0 +1,95 @@
+:host {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pt-safe-offset-4 {
+  padding-top: calc(env(safe-area-inset-top) + 1rem);
+}
+
+.overlay {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #222222;
+  position: relative;
+  overflow: hidden;
+}
+
+.overlay video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cutout-wrapper {
+  --p: 30px;
+  padding: var(--p);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: calc(100vw - 60px); /* Account for padding */
+  height: calc(100vw - 60px); /* Make it square */
+  max-width: calc(100vh - 200px); /* Ensure it fits vertically with safe areas */
+  max-height: calc(100vh - 200px);
+}
+
+.cutout-wrapper .cutout {
+  border-radius: 17px;
+  box-shadow: 0px 0px 0px 2000px rgba(0, 0, 0, 0.8);
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  z-index: 1;
+  --corner-padding: -8px;
+}
+
+.cutout-wrapper .cutout .top-left-corner,
+.cutout-wrapper .cutout .top-right-corner,
+.cutout-wrapper .cutout .bottom-left-corner,
+.cutout-wrapper .cutout .bottom-right-corner {
+  position: absolute;
+  z-index: 3;
+  height: 35px;
+  width: 35px;
+}
+
+.cutout-wrapper .cutout .top-left-corner {
+  top: var(--corner-padding);
+  left: var(--corner-padding);
+  border-top: 2px solid white;
+  border-left: 2px solid white;
+  border-top-left-radius: 25px;
+}
+
+.cutout-wrapper .cutout .top-right-corner {
+  top: var(--corner-padding);
+  right: var(--corner-padding);
+  border-top: 2px solid white;
+  border-right: 2px solid white;
+  border-top-right-radius: 25px;
+}
+
+.cutout-wrapper .cutout .bottom-left-corner {
+  bottom: var(--corner-padding);
+  left: var(--corner-padding);
+  border-bottom: 2px solid white;
+  border-left: 2px solid white;
+  border-bottom-left-radius: 25px;
+}
+
+.cutout-wrapper .cutout .bottom-right-corner {
+  bottom: var(--corner-padding);
+  right: var(--corner-padding);
+  border-bottom: 2px solid white;
+  border-right: 2px solid white;
+  border-bottom-right-radius: 25px;
+}
