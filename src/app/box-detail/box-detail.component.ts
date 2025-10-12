@@ -11,6 +11,7 @@ import {
   matPlus,
   matQrCode
 } from '@ng-icons/material-icons/baseline';
+import { toast } from 'ngx-sonner';
 import { map, Observable, startWith, switchMap } from 'rxjs';
 import { BreadcrumbComponent, type BreadcrumbItem } from '../breadcrumb/breadcrumb.component';
 import { MoveItemDialogComponent } from '../move-item-dialog/move-item-dialog.component';
@@ -101,17 +102,27 @@ export class BoxDetailComponent {
 
   public deleteBox(boxId: string | undefined): void {
     if (boxId && confirm('Are you sure you want to delete this box and all its contents?')) {
-      this.#firestoreService.deleteBox(boxId).subscribe(() => {
-        console.debug('Box deleted successfully!');
-        this.#router.navigate(['/boxes']);
+      this.#firestoreService.deleteBox(boxId).subscribe({
+        next: () => {
+          toast.success('Box deleted successfully');
+          this.#router.navigate(['/boxes']);
+        },
+        error: () => {
+          toast.error('Failed to delete box');
+        }
       });
     }
   }
 
   public deleteItem(itemId: string | undefined): void {
     if (itemId && confirm('Are you sure you want to delete this item?')) {
-      this.#firestoreService.deleteItem(this.boxId, itemId).subscribe(() => {
-        console.debug('Item deleted successfully!');
+      this.#firestoreService.deleteItem(this.boxId, itemId).subscribe({
+        next: () => {
+          toast.success('Item deleted successfully');
+        },
+        error: () => {
+          toast.error('Failed to delete item');
+        }
       });
     }
   }
@@ -139,12 +150,13 @@ export class BoxDetailComponent {
       this.isMoving = true;
       this.#firestoreService.moveItem(this.boxId, targetBoxId, this.selectedItemId).subscribe({
         next: () => {
-          console.debug('Item moved successfully!');
+          toast.success('Item moved successfully');
           this.moveItemDialog.close();
           this.isMoving = false;
         },
         error: (error: unknown) => {
           console.error('Error moving item:', error);
+          toast.error('Failed to move item');
           this.isMoving = false;
         }
       });

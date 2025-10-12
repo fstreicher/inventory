@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
 import { matArrowForwardIos, matSync } from '@ng-icons/material-icons/baseline';
+import { toast } from 'ngx-sonner';
 import { BreadcrumbComponent, type BreadcrumbItem } from '../breadcrumb/breadcrumb.component';
 import { Box, FirestoreService } from '../services/firestore.service';
 
@@ -74,21 +75,24 @@ export class BoxFormComponent implements OnInit {
               };
               this.#firestoreService.updateBox(updatedBox).subscribe({
                 next: () => {
-                  console.debug('Box updated successfully!');
+                  toast.success('Box updated successfully');
                   this.#router.navigate(['/box', this.boxId]);
                 },
                 error: (error: unknown) => {
                   console.error('Error updating box:', error);
+                  toast.error('Failed to update box');
                   this.isSubmitting = false;
                 }
               });
             } else {
               console.error('Box not found');
+              toast.error('Box not found');
               this.isSubmitting = false;
             }
           },
           error: (error: unknown) => {
             console.error('Error fetching box for update:', error);
+            toast.error('Failed to load box data');
             this.isSubmitting = false;
           }
         });
@@ -96,11 +100,12 @@ export class BoxFormComponent implements OnInit {
         // For new boxes, the service will add the userId automatically
         this.#firestoreService.addBox(boxData).subscribe({
           next: () => {
-            console.debug('Box added successfully!');
+            toast.success('Box created successfully');
             this.#router.navigate(['/boxes']);
           },
           error: (error: unknown) => {
             console.error('Error adding box:', error);
+            toast.error('Failed to create box');
             this.isSubmitting = false;
           }
         });

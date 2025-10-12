@@ -136,39 +136,51 @@
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (item of state.items; track item.id) {
               <div
-                class="relative rounded-lg border border-gray-200 dark:border-neutral-600 bg-gray-50 dark:bg-neutral-700 px-6 py-4 hover:bg-white dark:hover:bg-neutral-600 hover:shadow-sm">
-                <div class="flex items-start justify-between">
-                  <div class="flex-1 min-w-0">
-                    <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ item.name }}
-                    </h4>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400">
-                      {{ item.description || 'No description' }}
-                    </p>
+                class="relative rounded-lg border border-gray-200 dark:border-neutral-600 bg-gray-50 dark:bg-neutral-700 hover:bg-white dark:hover:bg-neutral-600 hover:shadow-sm transition-all duration-200 overflow-hidden">
+                
+                @if (item.imageUrl) {
+                  <div class="relative">
+                    <img 
+                      class="w-full h-32 object-cover"
+                      [alt]="item.name"
+                      [src]="item.imageUrl">
                   </div>
-                  <div class="ml-4 flex-shrink-0 flex space-x-2">
-                    <a class="text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer"
-                      title="Edit item"
-                      [routerLink]="['/box', box.id, 'edit-item', item.id]">
-                      <ng-icon
-                        size="1.25rem"
-                        [svg]="ICONS.edit" />
-                    </a>
-                    <button
-                      class="text-gray-400 dark:text-neutral-500 hover:text-blue-500 dark:hover:text-blue-400 cursor-pointer"
-                      title="Move item to another box"
-                      (click)="item.id && openMoveItemDialog(item.id)">
-                      <ng-icon
-                        size="1.25rem"
-                        [svg]="ICONS.move" />
-                    </button>
-                    <button
-                      class="text-gray-400 dark:text-neutral-500 hover:text-red-500 dark:hover:text-red-400 cursor-pointer"
-                      title="Delete item"
-                      (click)="deleteItem(item.id)">
-                      <ng-icon
-                        size="1.25rem"
-                        [svg]="ICONS.delete" />
-                    </button>
+                }
+                
+                <div class="p-6">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ item.name }}
+                      </h4>
+                      <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400">
+                        {{ item.description || 'No description' }}
+                      </p>
+                    </div>
+                    <div class="ml-4 flex-shrink-0 flex space-x-2">
+                      <a class="text-gray-400 dark:text-neutral-500 hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer"
+                        title="Edit item"
+                        [routerLink]="['/box', box.id, 'edit-item', item.id]">
+                        <ng-icon
+                          size="1.25rem"
+                          [svg]="ICONS.edit" />
+                      </a>
+                      <button
+                        class="text-gray-400 dark:text-neutral-500 hover:text-blue-500 dark:hover:text-blue-400 cursor-pointer"
+                        title="Move item to another box"
+                        (click)="item.id && openMoveItemDialog(item.id)">
+                        <ng-icon
+                          size="1.25rem"
+                          [svg]="ICONS.move" />
+                      </button>
+                      <button
+                        class="text-gray-400 dark:text-neutral-500 hover:text-red-500 dark:hover:text-red-400 cursor-pointer"
+                        title="Delete item"
+                        (click)="deleteItem(item.id)">
+                        <ng-icon
+                          size="1.25rem"
+                          [svg]="ICONS.delete" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

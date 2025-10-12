@@ -7,6 +7,7 @@ import {
   collection,
   collectionData,
   deleteDoc,
+  deleteField,
   doc,
   getDoc,
   query,
@@ -17,6 +18,7 @@ import { Observable, from, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { EncryptionService } from './encryption.service';
 import { OfflineService } from './offline.service';
+import { ImageService } from './image.service';
 
 export type Box = {
   id?: string;
@@ -29,6 +31,7 @@ export type Item = {
   id?: string;
   name: string;
   description?: string;
+  imageUrl?: string;
 }
 
 @Injectable({
@@ -39,6 +42,7 @@ export class FirestoreService {
   readonly #auth: Auth = inject(Auth);
   readonly #offlineService = inject(OfflineService);
   readonly #encryptionService = inject(EncryptionService);
+  readonly #imageService = inject(ImageService);
   readonly #boxesCollection = collection(this.#firestore, 'boxes');
 
   #getCurrentUserId(): string {
@@ -63,12 +67,12 @@ export class FirestoreService {
       name: await this.#encryptionService.encryptText(box.name),
       userId: this.#getCurrentUserId()
     };
-    
+
     // Only add description if it exists and is not empty
     if (box.description && box.description.trim() !== '') {
       encryptedBox.description = await this.#encryptionService.encryptText(box.description);
     }
-    
+
     return encryptedBox;
   }
 
@@ -84,20 +88,63 @@ export class FirestoreService {
     const encryptedItem: Item = {
       name: await this.#encryptionService.encryptText(item.name)
     };
-    
+
     // Only add description if it exists and is not empty
     if (item.description && item.description.trim() !== '') {
       encryptedItem.description = await this.#encryptionService.encryptText(item.description);
     }
-    
+
+    if (item.imageUrl) {
+      encryptedItem.imageUrl = item.imageUrl; // Image URLs don't need encryption
+    }
+
     return encryptedItem;
+  }
+
+  async #prepareBoxUpdateData(box: Box): Promise<Record<string, unknown>> {
+    const updateData: Record<string, unknown> = {
+      name: await this.#encryptionService.encryptText(box.name),
+      userId: this.#getCurrentUserId()
+    };
+
+    // Handle description: if it's null, undefined, or empty string, delete the field
+    if (!box.description || box.description.trim() === '') {
+      updateData['description'] = deleteField();
+    } else {
+      updateData['description'] = await this.#encryptionService.encryptText(box.description);
+    }
+
+    return updateData;
+  }
+
+  async #prepareItemUpdateData(item: Item): Promise<Record<string, unknown>> {
+    const updateData: Record<string, unknown> = {
+      name: await this.#encryptionService.encryptText(item.name)
+    };
+
+    // Handle description: if it's null, undefined, or empty string, delete the field
+    if (!item.description || item.description.trim() === '') {
+      updateData['description'] = deleteField();
+    } else {
+      updateData['description'] = await this.#encryptionService.encryptText(item.description);
+    }
+
+    // Handle imageUrl: if it's null, undefined, or empty string, delete the field
+    if (!item.imageUrl || item.imageUrl.trim() === '') {
+      updateData['imageUrl'] = deleteField();
+    } else {
+      updateData['imageUrl'] = item.imageUrl;
+    }
+
+    return updateData;
   }
 
   async #decryptItem(encryptedItem: Item): Promise<Item> {
     return {
       ...encryptedItem,
       name: await this.#encryptionService.decryptText(encryptedItem.name),
-      description: await this.#encryptionService.decryptText(encryptedItem.description)
+      description: await this.#encryptionService.decryptText(encryptedItem.description),
+      imageUrl: encryptedItem.imageUrl // Image URLs don't need decryption
     };
   }
 
@@ -150,8 +197,8 @@ export class FirestoreService {
       throw new Error('Access denied: Cannot update box that does not belong to current user');
     }
     const boxDocRef = doc(this.#firestore, `boxes/${box.id}`);
-    return from(this.#encryptBox(box)).pipe(
-      switchMap(encryptedBox => from(updateDoc(boxDocRef, encryptedBox)))
+    return from(this.#prepareBoxUpdateData(box)).pipe(
+      switchMap(updateData => from(updateDoc(boxDocRef, updateData)))
     );
   }
 
@@ -228,8 +275,8 @@ export class FirestoreService {
     return this.#verifyBoxOwnership(boxId).pipe(
       switchMap(() => {
         const itemDocRef = doc(this.#firestore, `boxes/${boxId}/items/${item.id}`);
-        return from(this.#encryptItem(item)).pipe(
-          switchMap(encryptedItem => from(updateDoc(itemDocRef, encryptedItem)))
+        return from(this.#prepareItemUpdateData(item)).pipe(
+          switchMap(updateData => from(updateDoc(itemDocRef, updateData)))
         );
       })
     );
@@ -238,8 +285,30 @@ export class FirestoreService {
   public deleteItem(boxId: string, itemId: string): Observable<void> {
     return this.#verifyBoxOwnership(boxId).pipe(
       switchMap(() => {
-        const itemDocRef = doc(this.#firestore, `boxes/${boxId}/items/${itemId}`);
-        return from(deleteDoc(itemDocRef));
+        // First get the item to check if it has an image
+        return this.getItem(boxId, itemId).pipe(
+          switchMap(item => {
+            const itemDocRef = doc(this.#firestore, `boxes/${boxId}/items/${itemId}`);
+
+            // Delete the item document first
+            return from(deleteDoc(itemDocRef)).pipe(
+              switchMap(() => {
+                // If the item had an image, delete it from storage
+                if (item?.imageUrl) {
+                  return this.#imageService.deleteItemImage(item.imageUrl).pipe(
+                    catchError(error => {
+                      console.warn('Failed to delete item image:', error);
+                      // Don't fail the whole operation if image deletion fails
+                      return from(Promise.resolve());
+                    })
+                  );
+                } else {
+                  return from(Promise.resolve());
+                }
+              })
+            );
+          })
+        );
       })
     );
   }
@@ -258,7 +327,7 @@ export class FirestoreService {
         const itemToMove: Item = {
           name: item.name
         };
-        
+
         // Only include description if it exists and is not empty
         if (item.description && item.description.trim() !== '') {
           itemToMove.description = item.description;

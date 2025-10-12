@@ -2,6 +2,7 @@ import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core
 import { initializeApp, provideFirebaseApp, getApp } from '@angular/fire/app';
 import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
 import { connectFirestoreEmulator, initializeFirestore, provideFirestore, persistentLocalCache, persistentMultipleTabManager } from '@angular/fire/firestore';
+import { connectStorageEmulator, getStorage, provideStorage } from '@angular/fire/storage';
 import { provideRouter } from '@angular/router';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
@@ -45,6 +46,19 @@ export const appConfig: ApplicationConfig = {
       }
 
       return firestore;
+    }),
+    provideStorage(() => {
+      const storage = getStorage();
+      if (!environment.production) {
+        // Connect to storage emulator in development - only if not already connected
+        try {
+          connectStorageEmulator(storage, environment.emulatorHost, firebase.emulators.storage.port);
+        } catch (error: unknown) {
+          // Emulator already connected, ignore error
+          console.warn('Storage emulator already connected', error);
+        }
+      }
+      return storage;
     }),
   ]
 };

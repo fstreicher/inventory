@@ -29,14 +29,14 @@
             @if (isOnline$ | async) {
               <div class="flex items-center space-x-1 text-green-600 dark:text-green-400">
                 <div class="h-4 w-4">
-                  <ng-icon size="16" [svg]="ICONS.wifi" />
+                  <ng-icon size="1rem" [svg]="ICONS.wifi" />
                 </div>
                 <span class="text-xs font-medium">Online</span>
               </div>
             } @else {
               <div class="flex items-center space-x-1 text-amber-600 dark:text-amber-400">
                 <div class="h-4 w-4 animate-pulse">
-                  <ng-icon size="16" [svg]="ICONS.wifiOff" />
+                  <ng-icon size="1rem" [svg]="ICONS.wifiOff" />
                 </div>
                 <span class="text-xs font-medium">Offline</span>
               </div>
@@ -49,7 +49,7 @@
             routerLink="/scan"
             title="Scan QR Code">
             <div class="h-5 w-5">
-              <ng-icon size="20" [svg]="ICONS.qrCodeScanner" />
+              <ng-icon size="1.25rem" [svg]="ICONS.qrCodeScanner" />
             </div>
           </a>
           <button
@@ -66,7 +66,7 @@
             class="text-gray-500 dark:text-neutral-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-700 px-3 py-2 rounded-md text-sm font-medium border border-gray-300 dark:border-neutral-600 hover:border-gray-400 dark:hover:border-neutral-500 flex items-center space-x-2"
             (click)="signOut()">
             <div class="h-4 w-4">
-              <ng-icon size="16" [svg]="ICONS.logout" />
+              <ng-icon size="1rem" [svg]="ICONS.logout" />
             </div>
             <span>Sign Out</span>
           </button>
@@ -79,12 +79,12 @@
           <!-- Mobile Offline Status -->
           @if (isOnline$ | async) {
             <div class="flex items-center space-x-1 text-green-600 dark:text-green-400" title="Online">
-                <ng-icon size="16" [svg]="ICONS.wifi" />
+                <ng-icon size="1rem" [svg]="ICONS.wifi" />
             </div>
           } @else {
             <div class="flex items-center space-x-1 text-amber-600 dark:text-amber-400" title="Offline">
               <div class="animate-pulse">
-                <ng-icon size="16" [svg]="ICONS.wifiOff" />
+                <ng-icon size="1rem" [svg]="ICONS.wifiOff" />
               </div>
             </div>
           }
@@ -94,7 +94,7 @@
             class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
             routerLink="/scan"
             title="Scan QR Code">
-              <ng-icon size="20" [svg]="ICONS.qrCodeScanner" />
+              <ng-icon size="1.25rem" [svg]="ICONS.qrCodeScanner" />
           </a>
           <button
             class="text-gray-400 dark:text-neutral-300 hover:text-gray-500 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
@@ -112,12 +112,12 @@
             @if (!isMobileMenuOpen) {
               <!-- Hamburger icon -->
               <div class="h-6 w-6">
-                <ng-icon size="24" [svg]="ICONS.menu" />
+                <ng-icon size="1.5rem" [svg]="ICONS.menu" />
               </div>
             } @else {
               <!-- Close icon -->
               <div class="h-6 w-6">
-                <ng-icon size="24" [svg]="ICONS.close" />
+                <ng-icon size="1.5rem" [svg]="ICONS.close" />
               </div>
             }
           </button>
@@ -149,7 +149,7 @@
                 (click)="signOut()">
                 <div class="flex items-center space-x-2">
                   <div class="h-4 w-4">
-                    <ng-icon size="16" [svg]="ICONS.logout" />
+                    <ng-icon size="1rem" [svg]="ICONS.logout" />
                   </div>
                   <span>Sign Out</span>
                 </div>

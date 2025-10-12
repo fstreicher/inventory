@@ -16,7 +16,7 @@
     <div class="relative">
       <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <div class="h-5 w-5 text-gray-400 dark:text-neutral-500">
-          <ng-icon size="20" [svg]="ICONS.search" />
+          <ng-icon size="1.25rem" [svg]="ICONS.search" />
         </div>
       </div>
       <input
@@ -31,7 +31,7 @@
             type="button"
             (click)="clearSearch()">
             <div class="h-5 w-5">
-              <ng-icon size="20" [svg]="ICONS.close" />
+              <ng-icon size="1.25rem" [svg]="ICONS.close" />
             </div>
           </button>
         </div>
@@ -48,8 +48,8 @@
   <div
     class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg p-8 border border-gray-200 dark:border-neutral-600">
     <div class="flex items-center justify-center">
-      <div class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary-600 dark:text-primary-400">
-        <ng-icon size="20" [svg]="ICONS.sync" />
+      <div class="animate-[spin_1s_linear_infinite_reverse] -ml-1 mr-3 h-5 w-5 text-primary-600 dark:text-primary-400">
+        <ng-icon size="1.25rem" [svg]="ICONS.sync" />
       </div>
       <span class="text-gray-600 dark:text-neutral-300">Searching...</span>
     </div>
@@ -63,7 +63,7 @@
       class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg p-8 border border-gray-200 dark:border-neutral-600">
       <div class="text-center">
         <div class="mx-auto h-12 w-12 text-gray-400 dark:text-neutral-500">
-          <ng-icon size="48" [svg]="ICONS.search" />
+          <ng-icon size="3rem" [svg]="ICONS.search" />
         </div>
         <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No items found</h3>
         <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400">
@@ -87,16 +87,27 @@
               <div
                 class="border border-gray-200 dark:border-neutral-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-neutral-700">
                 <div class="flex items-start justify-between">
+                  @if (result.item.imageUrl) {
+                    <div class="flex-shrink-0 mr-4">
+                      <img 
+                        [src]="result.item.imageUrl" 
+                        [alt]="result.item.name"
+                        class="w-16 h-16 object-cover rounded-lg">
+                    </div>
+                  }
+                  
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center space-x-3 mb-2">
-                      <div class="flex-shrink-0">
-                        <div
-                          class="h-8 w-8 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-                          <div class="h-5 w-5 text-primary-600 dark:text-primary-400">
-                            <ng-icon size="20" [svg]="ICONS.description" />
+                      @if (!result.item.imageUrl) {
+                        <div class="flex-shrink-0">
+                          <div
+                            class="h-8 w-8 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+                            <div class="text-primary-600 dark:text-primary-400">
+                              <ng-icon size="1.25rem" [svg]="ICONS.description" />
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      }
                       <div class="flex-1 min-w-0">
                         <h4
                           class="text-sm font-medium text-gray-900 dark:text-white"

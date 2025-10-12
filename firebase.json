@@ -3,6 +3,9 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "storage": {
+    "rules": "storage.rules"
+  },
   "hosting": {
     "public": "dist/browser",
     "ignore": [
@@ -66,6 +69,10 @@
   "emulators": {
     "firestore": {
       "port": 8080,
+      "host": "0.0.0.0"
+    },
+    "storage": {
+      "port": 9199,
       "host": "0.0.0.0"
     },
     "ui": {

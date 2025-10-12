@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { NgIconComponent } from '@ng-icons/core';
 import { matError, matSync } from '@ng-icons/material-icons/baseline';
+import { toast } from 'ngx-sonner';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -25,11 +26,14 @@ export class LoginComponent {
 
     try {
       await this.#authService.signInWithGoogle();
+      toast.success('Successfully signed in');
     } catch (error: unknown) {
       if (error instanceof Error) {
         this.errorMessage = error.message || 'Failed to sign in. Please try again.';
+        toast.error(this.errorMessage);
       } else {
         this.errorMessage = 'Failed to sign in. Please try again.';
+        toast.error(this.errorMessage);
       }
     } finally {
       this.isLoading = false;
