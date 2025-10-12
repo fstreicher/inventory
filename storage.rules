@@ -1,12 +1,25 @@
 rules_version = '2';
 
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
+    // Images stored in users/{userId}/boxes/{boxId}/{fileName}
+    match /users/{userId}/boxes/{boxId}/{fileName} {
+      // Allow read/write/delete if user is authenticated and owns the box
+      allow read, write, delete: if request.auth != null && 
+        request.auth.uid == userId &&
+        firestore.get(/databases/(default)/documents/boxes/$(boxId)).data.userId == request.auth.uid;
+      
+      // Validate file on upload
+      allow create: if request.auth != null && 
+        request.auth.uid == userId &&
+        firestore.get(/databases/(default)/documents/boxes/$(boxId)).data.userId == request.auth.uid &&
+        request.resource.size < 5 * 1024 * 1024 && // Max 5MB
+        request.resource.contentType.matches('image/.*'); // Only images
+    }
+    
+    // Deny all other access
     match /{allPaths=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if false;
     }
   }
 }
