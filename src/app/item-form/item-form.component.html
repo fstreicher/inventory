@@ -78,9 +78,8 @@
                 [disabled]="!isFormValid()">
                 @if (isSubmitting()) {
                   <ng-icon
-                    class="translate-0.5"
+                    class="translate-0.5 animate-[spin_1s_linear_infinite_reverse]"
                     size="1.125rem"
-                    [class.animate-spin]="isSubmitting()"
                     [svg]="ICONS.spinner" />
                 }
                 {{ isSubmitting() ? 'Saving...' : (itemId() ? 'Update Item' : 'Add Item') }}

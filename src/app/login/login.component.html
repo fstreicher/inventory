@@ -41,7 +41,7 @@
             [disabled]="isLoading"
             (click)="signInWithGoogle()">
             @if (isLoading) {
-              <div class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500 dark:text-neutral-400">
+              <div class="animate-[spin_1s_linear_infinite_reverse] -ml-1 mr-3 h-5 w-5 text-gray-500 dark:text-neutral-400">
                 <ng-icon size="20" [svg]="ICONS.sync" />
               </div>
               Signing in...
