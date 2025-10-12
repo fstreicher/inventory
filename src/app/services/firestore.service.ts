@@ -161,6 +161,20 @@ export class FirestoreService {
     );
   }
 
+  public async getBoxesOnce(): Promise<Array<Box>> {
+    return new Promise((resolve, reject) => {
+      this.getBoxes().pipe(
+        catchError(error => {
+          reject(error instanceof Error ? error : new Error(String(error)));
+          return throwError(() => error instanceof Error ? error : new Error(String(error)));
+        })
+      ).subscribe({
+        next: (boxes) => resolve(boxes),
+        error: (error) => reject(error instanceof Error ? error : new Error(String(error)))
+      });
+    });
+  }
+
   public getBox(id: string): Observable<Box | undefined> {
     const boxDocRef = doc(this.#firestore, `boxes/${id}`);
     return from(getDoc(boxDocRef)).pipe(

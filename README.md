@@ -12,14 +12,17 @@ A modern, offline-first inventory management application perfect for organizing 
 
 ### 🔍 **Item Management** 
 - Add, edit, and delete items within boxes
+- Move items between boxes with easy dialog interface
+- Attach images to items for visual identification
 - Search items across all boxes
 - Detailed item descriptions and metadata
 - Easy item organization and categorization
 
 ### 📱 **QR Code Integration**
-- Generate QR codes for each box
+- Export and print QR codes for all boxes
 - QR scanner component for quick box access
 - Mobile-optimized scanning experience
+- Dialog-based export with print preview
 
 ### 🌐 **Offline-First Design**
 - **Full offline functionality** - Works completely without internet
