@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, effect, inject, input, output, signal } from '@angular/core';
 import { NgIconComponent } from '@ng-icons/core';
 import {
   matCameraAlt,
@@ -43,6 +43,9 @@ export class ImageUploadComponent {
   public imageUploaded = output<string>();
   public imageRemoved = output<void>();
 
+  @ViewChild('cameraInput') public cameraInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('galleryInput') public galleryInput!: ElementRef<HTMLInputElement>;
+
   constructor() {
     // Sync input signal with internal signal
     effect(() => {
@@ -61,25 +64,16 @@ export class ImageUploadComponent {
     if (inputFile.files?.[0]) {
       this.uploadImage(inputFile.files[0]);
     }
+    // Reset input value to allow selecting the same file again
+    inputFile.value = '';
   }
 
   protected onCameraClick(): void {
-    // Open camera (will fall back to file picker on desktop)
-    const inputFile = document.createElement('input');
-    inputFile.type = 'file';
-    inputFile.accept = 'image/*';
-    inputFile.capture = 'environment'; // Use rear camera on mobile
-    inputFile.addEventListener('change', (e) => this.onFileSelected(e));
-    inputFile.click();
+    this.cameraInput?.nativeElement.click();
   }
 
   protected onGalleryClick(): void {
-    // Open gallery/file picker
-    const inputFile = document.createElement('input');
-    inputFile.type = 'file';
-    inputFile.accept = 'image/*';
-    inputFile.addEventListener('change', (e) => this.onFileSelected(e));
-    inputFile.click();
+    this.galleryInput?.nativeElement.click();
   }
 
   protected onRemoveImage(): void {

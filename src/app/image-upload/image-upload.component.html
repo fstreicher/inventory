@@ -94,4 +94,22 @@
   <p class="text-xs text-gray-500 dark:text-neutral-400">
     Images will be resized automatically for optimal storage. Supported formats: JPG, PNG, GIF.
   </p>
+
+  <!-- Add these hidden inputs at the end of your template -->
+  <input
+    #cameraInput
+    type="file"
+    accept="image/*"
+    capture="environment"
+    (change)="onFileSelected($event)"
+    style="display: none"
+  />
+
+  <input
+    #galleryInput
+    type="file"
+    accept="image/*"
+    (change)="onFileSelected($event)"
+    style="display: none"
+  />
 </div>
