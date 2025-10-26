@@ -2,7 +2,7 @@
   "name": "Inventory Manager",
   "short_name": "Inventory",
   "description": "Manage your boxes and items inventory, even offline in the basement",
-  "theme_color": "#5fa393",
+  "theme_color": "#005f5a",
   "background_color": "#ffffff",
   "display": "standalone",
   "orientation": "portrait",
