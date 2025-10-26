@@ -1,5 +1,5 @@
 // Simple service worker for offline caching
-const CACHE_NAME = 'inventory-manager-v1';
+const CACHE_NAME = 'inventory-manager-v1.1.0';
 const urlsToCache = [
   '/',
   '/manifest.json',
