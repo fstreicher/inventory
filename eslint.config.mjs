@@ -14,6 +14,7 @@ export default defineConfig(
       '.angular/**',
       'node_modules/**',
       'public/**', // Ignore service worker and other public assets
+      'scripts/**', // Ignore Node.js scripts
     ],
   },
 
